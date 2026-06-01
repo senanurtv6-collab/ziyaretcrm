@@ -6,7 +6,7 @@
     <title>ZİYARET PLANLAMA - Iceinox CRM</title>
     <meta name="description" content="Iceinox Ziyaret Planlama CRM Sistemi">
     <meta name="keywords" content="ziyaret planlama, iceinox, crm">
-  
+
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js">
     </script>
@@ -588,31 +588,32 @@
             font-size: 18px;
         }
         .ajanda-row {
-            display: grid;
-            grid-template-columns: 2fr 1.2fr 1.2fr 1.5fr 1.5fr 0.4fr;
-            gap: 10px;
-            align-items: end;
-            margin-bottom: 10px;
-            padding: 12px;
-            background: white;
-            border-radius: 8px;
-            border: 1px solid #e0e0e0;
-            transition: all 0.2s;
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1.2fr 1.2fr 1fr 0.4fr;
+    gap: 8px;
+    align-items: end;
+    margin-bottom: 8px;
+    padding: 10px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    transition: all 0.2s;
         }
         .ajanda-row:hover {
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
         .ajanda-row-header {
-            display: grid;
-            grid-template-columns: 2fr 1.2fr 1.2fr 1.5fr 1.5fr 0.4fr;
-            gap: 10px;
-            font-weight: 600;
-            color: #333;
-            padding: 8px 12px;
-            background: #667eea15;
-            border-radius: 8px;
-            margin-bottom: 5px;
-        }
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1.2fr 1.2fr 1fr 0.4fr;
+    gap: 8px;
+    font-weight: 600;
+    color: #333;
+    padding: 8px 10px;
+    background: #667eea15;
+    border-radius: 8px;
+    margin-bottom: 5px;
+    font-size: 12px;
+}
         .ajanda-row .form-group {
             margin-bottom: 0;
         }
@@ -808,27 +809,28 @@
 
         <!-- AJANDA PANELİ -->
         <div class="content-panel" id="ajandaPanel">
-            <h3>📅 Haftalık Ajanda</h3>
-            <div class="filter-bar">
-                <div class="form-group" style="min-width:200px; margin-bottom:0;">
-                    <label style="font-size:13px; margin-bottom:4px;">👤 Danışman Seçimi</label>
-                    <select id="ajandaDanismanSelect">
-                        <option value="">-- Danışman Seçin --</option>
-			<option value="Barış">Barış</option>
-                        <option value="Murat">Murat</option>
-                        <option value="İbrahim">İbrahim</option>
-                        <option value="Denizhan">Denizhan</option>
-                        <option value="Orkun">Orkun</option>
-                        <option value="Dilshod">Dilshad</option>
-                    </select>
-                </div>
-                <button class="btn btn-success btn-sm" id="ajandaHaftaEkleBtn" style="display:none;">➕ Hafta Ekle</button>
-                <button class="btn btn-info btn-sm" id="ajandaYenileBtn">🔄 Yenile</button>
-            </div>
-            <div id="ajandaHaftalarContainer">
-                <p style="text-align:center;color:#999;">👆 Lütfen bir danışman seçin</p>
-            </div>
+    <h3>📅 Haftalık Ajanda</h3>
+    <div class="filter-bar">
+        <div class="form-group" style="min-width:200px; margin-bottom:0;">
+            <label style="font-size:13px; margin-bottom:4px;">👤 Danışman Seçimi</label>
+            <select id="ajandaDanismanSelect">
+                <option value="">-- Danışman Seçin --</option>
+                <option value="Barış">Barış</option>
+                <option value="Murat">Murat</option>
+                <option value="İbrahim">İbrahim</option>
+                <option value="Denizhan">Denizhan</option>
+                <option value="Orkun">Orkun</option>
+                <option value="Dilshod">Dilshad</option>
+            </select>
         </div>
+        <button class="btn btn-success btn-sm" id="ajandaHaftaEkleBtn" style="display:none;">➕ Hafta Ekle</button>
+        <button class="btn btn-warning btn-sm" id="ajandaKaydetBtn" style="display:none;">💾 Kaydet</button>
+        <button class="btn btn-info btn-sm" id="ajandaYenileBtn">🔄 Yenile</button>
+    </div>
+    <div id="ajandaHaftalarContainer">
+        <p style="text-align:center;color:#999;">👆 Lütfen bir danışman seçin</p>
+    </div>
+</div>
 
         <!-- Cari Yönetim Paneli -->
         <div class="content-panel" id="carilerPanel">
@@ -1723,48 +1725,57 @@
             container.innerHTML = '<p style="text-align:center;color:#999;">👆 Lütfen bir danışman seçin</p>';
         }
 
-        function ajandaDanismanSecildi() {
-            const danisman = document.getElementById('ajandaDanismanSelect').value;
-            const haftaEkleBtn = document.getElementById('ajandaHaftaEkleBtn');
-            const container = document.getElementById('ajandaHaftalarContainer');
-            if (!danisman) {
-                haftaEkleBtn.style.display = 'none';
-                container.innerHTML = '<p style="text-align:center;color:#999;">👆 Lütfen bir danışman seçin</p>';
-                return;
-            }
-            if (['barış', 'burak', 'sena'].includes(currentUser)) {
-                haftaEkleBtn.style.display = 'inline-block';
-            } else {
-                haftaEkleBtn.style.display = 'none';
-            }
-            ajandaHaftalariGoster(danisman);
-        }
+       function ajandaDanismanSecildi() {
+    const danisman = document.getElementById('ajandaDanismanSelect').value;
+    const haftaEkleBtn = document.getElementById('ajandaHaftaEkleBtn');
+    const kaydetBtn = document.getElementById('ajandaKaydetBtn');
+    const container = document.getElementById('ajandaHaftalarContainer');
+    if (!danisman) {
+        haftaEkleBtn.style.display = 'none';
+        kaydetBtn.style.display = 'none';
+        container.innerHTML = '<p style="text-align:center;color:#999;">👆 Lütfen bir danışman seçin</p>';
+        return;
+    }
+    if (['barış', 'burak', 'sena'].includes(currentUser)) {
+        haftaEkleBtn.style.display = 'inline-block';
+        kaydetBtn.style.display = 'inline-block';
+    } else {
+        haftaEkleBtn.style.display = 'none';
+        kaydetBtn.style.display = 'none';
+    }
+    ajandaHaftalariGoster(danisman);
+}
 
         function ajandaHaftaEkle() {
-            const danisman = document.getElementById('ajandaDanismanSelect').value;
-            if (!danisman) return alert('Lütfen önce danışman seçin!');
-            if (!ajandaVerileri[danisman]) {
-                ajandaVerileri[danisman] = [];
-            }
-            const yeniHafta = {
-                id: 'hafta_' + Date.now(),
-                olusturmaTarihi: new Date().toLocaleString('tr-TR'),
-                gunler: [
-                    { tarih: '', ulke: '', sehir: '', cari: '', not: '' },
-                    { tarih: '', ulke: '', sehir: '', cari: '', not: '' },
-                    { tarih: '', ulke: '', sehir: '', cari: '', not: '' },
-                    { tarih: '', ulke: '', sehir: '', cari: '', not: '' },
-                    { tarih: '', ulke: '', sehir: '', cari: '', not: '' },
-                    { tarih: '', ulke: '', sehir: '', cari: '', not: '' },
-                    { tarih: '', ulke: '', sehir: '', cari: '', not: '' }
-                ]
-            };
-            ajandaVerileri[danisman].push(yeniHafta);
-            ajandaVerileriniKaydet().then(() => {
-                ajandaHaftalariGoster(danisman);
-                alert('✅ Yeni hafta eklendi!');
-            });
-        }
+    const danisman = document.getElementById('ajandaDanismanSelect').value;
+    if (!danisman) return alert('Lütfen önce danışman seçin!');
+    if (!ajandaVerileri[danisman]) {
+        ajandaVerileri[danisman] = [];
+    }
+    const yeniHafta = {
+        id: 'hafta_' + Date.now(),
+        olusturmaTarihi: new Date().toLocaleString('tr-TR'),
+        olusturan: currentUser,
+        degistiren: '',
+        degistirmeTarihi: '',
+        gunler: [
+            { tarih: '', ulke: '', sehir: '', cari: '', not: '' },
+            { tarih: '', ulke: '', sehir: '', cari: '', not: '' },
+            { tarih: '', ulke: '', sehir: '', cari: '', not: '' },
+            { tarih: '', ulke: '', sehir: '', cari: '', not: '' },
+            { tarih: '', ulke: '', sehir: '', cari: '', not: '' },
+            { tarih: '', ulke: '', sehir: '', cari: '', not: '' },
+            { tarih: '', ulke: '', sehir: '', cari: '', not: '' }
+        ]
+    };
+    ajandaVerileri[danisman].push(yeniHafta);
+    ajandaVerileriniKaydet().then(() => {
+        ajandaHaftalariGoster(danisman);
+        alert('✅ Yeni hafta eklendi ve kaydedildi!');
+    }).catch(err => {
+        alert('❌ Kayıt hatası: ' + err.message);
+    });
+}
 
         function ajandaHaftaSil(danisman, haftaId) {
             if (!confirm('Bu haftayı silmek istediğinize emin misiniz?')) return;
@@ -1778,17 +1789,15 @@
         }
 
         function ajandaGunGuncelle(danisman, haftaId, gunIndex, alan, deger) {
-            if (ajandaVerileri[danisman]) {
-                const hafta = ajandaVerileri[danisman].find(h => h.id === haftaId);
-                if (hafta && hafta.gunler[gunIndex]) {
-                    hafta.gunler[gunIndex][alan] = deger;
-                    ajandaVerileriniKaydet().catch(err => {
-                        console.error('Güncelleme hatası:', err);
-                        alert('❌ Güncelleme sırasında hata oluştu!');
-                    });
-                }
-            }
+    if (ajandaVerileri[danisman]) {
+        const hafta = ajandaVerileri[danisman].find(h => h.id === haftaId);
+        if (hafta && hafta.gunler[gunIndex]) {
+            hafta.gunler[gunIndex][alan] = deger;
+            hafta.degistiren = currentUser;
+            hafta.degistirmeTarihi = new Date().toLocaleString('tr-TR');
         }
+    }
+}
 
         function ajandaHaftalariGoster(danisman) {
             const container = document.getElementById('ajandaHaftalarContainer');
@@ -1806,7 +1815,7 @@
                 html += `
                 <div class="ajanda-hafta-container">
                     <div class="ajanda-hafta-baslik">
-                        <h4>📅 ${haftaIndex + 1}. Hafta (${hafta.olusturmaTarihi || 'Tarihsiz'})</h4>
+                        <h4>📅 ${haftaIndex + 1}. Hafta</h4>
                         ${canEdit ? `<button class="btn btn-danger btn-sm" onclick="ajandaHaftaSil('${danisman}', '${hafta.id}')">🗑️ Haftayı Sil</button>` : ''}
                     </div>
                     <div class="ajanda-row-header">
@@ -1815,6 +1824,7 @@
                         <div>🏙️ Şehir</div>
                         <div>🏢 Cari</div>
 			<div>📝 Not</div>
+			<div>📌 Durum</div>
                         <div></div>
                     </div>`;
                 hafta.gunler.forEach((gun, gunIndex) => {
@@ -1852,14 +1862,20 @@
                                    onchange="ajandaGunGuncelle('${danisman}', '${hafta.id}', ${gunIndex}, 'cari', this.value)"
                                    placeholder="Cari adı girin">
  </div>
-                        <div class="form-group">
-                            <label>Not</label>
-                            <input type="text" value="${gun.not || ''}" 
-                                   class="${canEdit ? '' : 'readonly-field'}"
-                                   ${canEdit ? '' : 'readonly'} 
-                                   onchange="ajandaGunGuncelle('${danisman}', '${hafta.id}', ${gunIndex}, 'cari', this.value)"
-                                   placeholder="Cari adı girin">
-                        </div>
+                       <div class="form-group">
+    <label>Not</label>
+    <input type="text" value="${gun.not || ''}" 
+           class="${canEdit ? '' : 'readonly-field'}"
+           ${canEdit ? '' : 'readonly'} 
+           onchange="ajandaGunGuncelle('${danisman}', '${hafta.id}', ${gunIndex}, 'not', this.value)"
+           placeholder="Not ekleyin">
+</div>
+<div style="font-size:10px; padding-top:5px;">
+    ${gunIndex === 0 ? `
+        <span style="color:#28a745;">👤 Oluşturan:<br>${hafta.olusturan || 'Bilinmiyor'}</span><br>
+        ${hafta.degistiren ? '<span style="color:#ffc107;">✏️ Değiştiren:<br>' + hafta.degistiren + '</span>' : '<span style="color:#999;">Henüz değiştirilmedi</span>'}
+    ` : ''}
+</div>
                         <div style="display:flex;align-items:flex-end;justify-content:center;">
                             <span style="font-size:11px;color:#999;">Gün ${gunIndex + 1}</span>
                         </div>
@@ -2141,6 +2157,18 @@
                 kapatKullaniciModal();
                 guncelleKullaniciListesi(); } else { alert('❌ Kayıt sırasında bir hata oluştu!'); }
         }
+async function ajandaDegisiklikleriKaydet() {
+    const danisman = document.getElementById('ajandaDanismanSelect').value;
+    if (!danisman) return alert('Lütfen önce danışman seçin!');
+    
+    try {
+        await ajandaVerileriniKaydet();
+        alert('✅ Tüm değişiklikler kaydedildi!');
+        ajandaHaftalariGoster(danisman);
+    } catch (e) {
+        alert('❌ Kayıt hatası: ' + e.message);
+    }
+}
 
         async function kullaniciSil(kullaniciAdi) {
             if (!confirm(`⚠️ "${kullaniciAdi}" kullanıcısını silmek istediğinize emin misiniz?\n\nBu işlem geri alınamaz!`))
@@ -2308,6 +2336,10 @@
             if (ajandaDanismanSelect) {
                 ajandaDanismanSelect.addEventListener('change', ajandaDanismanSecildi);
             }
+const ajandaKaydetBtn = document.getElementById('ajandaKaydetBtn');
+if (ajandaKaydetBtn) {
+    ajandaKaydetBtn.addEventListener('click', ajandaDegisiklikleriKaydet);
+}
             const ajandaHaftaEkleBtn = document.getElementById('ajandaHaftaEkleBtn');
             if (ajandaHaftaEkleBtn) {
                 ajandaHaftaEkleBtn.addEventListener('click', ajandaHaftaEkle);
