@@ -521,6 +521,21 @@
             margin-left: 5px;
             opacity: 0.6;
         }
+.sortable {
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.2s;
+}
+.sort-icon.active {
+    opacity: 1;
+    color: #667eea;
+}
+.sort-asc .sort-icon::after {
+    content: ' ▲';
+}
+.sort-desc .sort-icon::after {
+    content: ' ▼';
+}
         .filter-input:focus {
             outline: none;
             border-color: #667eea;
@@ -566,107 +581,141 @@
             min-width: 150px;
         }
 
-        /* ========== AJANDA STİLLERİ ========== */
-        .ajanda-hafta-container {
-            background: #f8f9fa;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            border: 1px solid #e0e0e0;
-        }
-        .ajanda-hafta-baslik {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #667eea;
-        }
-        .ajanda-hafta-baslik h4 {
-            color: #667eea;
-            margin: 0;
-            font-size: 18px;
-        }
-        .ajanda-row {
-    display: grid;
-    grid-template-columns: 1.5fr 1fr 1fr 1.2fr 1.2fr 1fr 0.4fr;
-    gap: 8px;
-    align-items: end;
-    margin-bottom: 8px;
-    padding: 10px;
-    background: white;
-    border-radius: 8px;
+       /* ========== YENİ AJANDA STİLLERİ ========== */
+.ajanda-aylik-container {
+    margin-bottom: 30px;
     border: 1px solid #e0e0e0;
-    transition: all 0.2s;
-        }
-        .ajanda-row:hover {
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-        .ajanda-row-header {
-    display: grid;
-    grid-template-columns: 1.5fr 1fr 1fr 1.2fr 1.2fr 1fr 0.4fr;
-    gap: 8px;
+    border-radius: 12px;
+    overflow: hidden;
+}
+.ajanda-aylik-baslik {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.ajanda-aylik-baslik h4 {
+    margin: 0;
+    font-size: 16px;
+}
+.ajanda-tablo {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+.ajanda-tablo th {
+    background: #f8f9fa;
     font-weight: 600;
     color: #333;
-    padding: 8px 10px;
+    padding: 10px 8px;
+    font-size: 12px;
+    text-align: center;
+    border: 1px solid #ddd;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+.ajanda-tablo th.danisman-baslik {
+    width: 120px;
+    background: #667eea;
+    color: white;
+    position: sticky;
+    left: 0;
+    z-index: 2;
+}
+.ajanda-tablo td {
+    padding: 4px;
+    border: 1px solid #ddd;
+    vertical-align: top;
+}
+.ajanda-tablo td.danisman-hucre {
+    background: #f8f9fa;
+    font-weight: 600;
+    text-align: center;
+    font-size: 13px;
+    color: #333;
+    position: sticky;
+    left: 0;
+    z-index: 1;
+}
+.ajanda-tablo textarea {
+    width: 100%;
+    min-height: 50px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    padding: 4px;
+    font-size: 11px;
+    resize: vertical;
+    background: transparent;
+    transition: all 0.2s;
+}
+.ajanda-tablo textarea:hover {
+    border-color: #ddd;
+    background: #fff;
+}
+.ajanda-tablo textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    background: #fff;
+    box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+}
+.ajanda-tablo textarea.readonly-textarea {
+    background: #f5f5f5;
+    cursor: not-allowed;
+}
+.ajanda-tablo textarea.readonly-textarea:hover {
+    border-color: transparent;
+    background: #f5f5f5;
+}
+.ajanda-tablo .hafta-baslik {
     background: #667eea15;
-    border-radius: 8px;
-    margin-bottom: 5px;
+    color: #667eea;
+    font-weight: 700;
+    text-align: center;
     font-size: 12px;
 }
-        .ajanda-row .form-group {
-            margin-bottom: 0;
-        }
-        .ajanda-row .form-group label {
-            font-size: 11px;
-            margin-bottom: 4px;
-            color: #666;
-        }
-        .ajanda-row .form-group input,
-        .ajanda-row .form-group select {
-            padding: 8px;
-            font-size: 13px;
-        }
-        .ajanda-row .btn {
-            padding: 6px 10px;
-            font-size: 12px;
-        }
-        .ajanda-gun-baslik {
-            font-weight: 600;
-            color: #667eea;
-            font-size: 13px;
-            margin-bottom: 5px;
-        }
-        .readonly-field {
-            background-color: #f5f5f5 !important;
-            cursor: not-allowed;
-        }
+.ajanda-ay-secimi {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.ajanda-excel-btn {
+    background: #217346;
+    color: white;
+    margin-left: auto;
+}
+.ajanda-excel-btn:hover {
+    background: #185a32;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(33, 115, 70, 0.4);
+}
+.ajanda-ay-secimi select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+}
 
-        @media (max-width: 768px) {
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-            .rakip-row {
-                grid-template-columns: 1fr;
-            }
-            .filter-bar {
-                flex-direction: column;
-            }
-            .detail-label {
-                width: 100%;
-                margin-bottom: 5px;
-            }
-            .kullanici-listesi {
-                grid-template-columns: 1fr;
-            }
-            .ajanda-row {
-                grid-template-columns: 1fr;
-                gap: 8px;
-            }
-            .ajanda-row-header {
-                display: none;
-            }
-        }
+@media (max-width: 768px) {
+    .ajanda-tablo th.danisman-baslik {
+        width: 80px;
+        font-size: 10px;
+    }
+    .ajanda-tablo td.danisman-hucre {
+        font-size: 11px;
+    }
+    .ajanda-tablo th {
+        font-size: 10px;
+        padding: 6px 4px;
+    }
+    .ajanda-tablo textarea {
+        font-size: 10px;
+        min-height: 40px;
+    }
+}
     </style>
 </head>
 <body>
@@ -782,21 +831,21 @@
                 <span style="font-size:12px;color:#666;margin-left:10px;" id="secimSayisi">0 seçili</span>
             </div>
             <div class="table-container">
-                <table id="kayitlarTablosu">
-                    <thead>
-                        <tr>
-                            <th class="checkbox-cell"><input type="checkbox" id="tumunuSec" title="Tümünü Seç"></th>
-                            <th>Temsilci</th>
-                            <th>Cari Kodu</th>
-                            <th>Cari Adı</th>
-                            <th>Tarih</th>
-                            <th>Saat</th>
-                            <th>Ülke</th>
-                            <th>Şehir</th>
-                            <th>Firma Çeşidi</th>
-                            <th>İşlem</th>
-                        </tr>
-                    </thead>
+               <table id="kayitlarTablosu">
+    <thead>
+        <tr>
+            <th class="checkbox-cell"><input type="checkbox" id="tumunuSec" title="Tümünü Seç"></th>
+            <th class="sortable" data-sort="kaydeden">Temsilci <span class="sort-icon"></span></th>
+            <th class="sortable" data-sort="cari_kod">Cari Kodu <span class="sort-icon"></span></th>
+            <th class="sortable" data-sort="cari_isim">Cari Adı <span class="sort-icon"></span></th>
+            <th class="sortable" data-sort="tarih">Tarih <span class="sort-icon"></span></th>
+            <th class="sortable" data-sort="ziyaret_saati">Saat <span class="sort-icon"></span></th>
+            <th class="sortable" data-sort="ulke">Ülke <span class="sort-icon"></span></th>
+            <th class="sortable" data-sort="sehir">Şehir <span class="sort-icon"></span></th>
+            <th class="sortable" data-sort="firma_cesidi">Firma Çeşidi <span class="sort-icon"></span></th>
+            <th>İşlem</th>
+        </tr>
+    </thead>
                     <tbody id="kayitlarTbody">
                         <tr>
                             <td colspan="10" style="text-align:center;">⏳ Yükleniyor...</td>
@@ -807,74 +856,89 @@
             <div class="pagination" id="pagination"></div>
         </div>
 
-        <!-- AJANDA PANELİ -->
-        <div class="content-panel" id="ajandaPanel">
-    <h3>📅 Haftalık Ajanda</h3>
+ <!-- YENİ AJANDA PANELİ -->
+<div class="content-panel" id="ajandaPanel">
+    <h3>📅 Aylık Ajanda</h3>
     <div class="filter-bar">
-        <div class="form-group" style="min-width:200px; margin-bottom:0;">
-            <label style="font-size:13px; margin-bottom:4px;">👤 Danışman Seçimi</label>
-            <select id="ajandaDanismanSelect">
-                <option value="">-- Danışman Seçin --</option>
-                <option value="Barış">Barış</option>
-                <option value="Murat">Murat</option>
-                <option value="İbrahim">İbrahim</option>
-                <option value="Denizhan">Denizhan</option>
-                <option value="Orkun">Orkun</option>
-                <option value="Dilshod">Dilshad</option>
+        <div class="ajanda-ay-secimi">
+            <label style="font-weight:600;">📆 Yıl:</label>
+            <select id="ajandaYilSelect">
+                <!-- Dinamik olarak doldurulacak -->
             </select>
+            <label style="font-weight:600; margin-left:10px;">📅 Ay:</label>
+            <select id="ajandaAySelect">
+                <option value="01">Ocak</option>
+                <option value="02">Şubat</option>
+                <option value="03">Mart</option>
+                <option value="04">Nisan</option>
+                <option value="05">Mayıs</option>
+                <option value="06">Haziran</option>
+                <option value="07">Temmuz</option>
+                <option value="08">Ağustos</option>
+                <option value="09">Eylül</option>
+                <option value="10">Ekim</option>
+                <option value="11">Kasım</option>
+                <option value="12">Aralık</option>
+            </select>
+            <button class="btn btn-success btn-sm" id="ajandaKaydetBtn" style="display:none;">💾 Tüm Değişiklikleri Kaydet</button>
+            <button class="btn btn-info btn-sm" id="ajandaYenileBtn">🔄 Firebase'den Yenile</button>
+            
+            <!-- ÇOKLU AY SEÇİMİ VE EXCEL BUTONU -->
+            <div style="border-left:2px solid #ddd;padding-left:15px;margin-left:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                <label style="font-weight:600;font-size:13px;">📥 Toplu Excel:</label>
+                <select id="ajandaExcelYilSelect" style="padding:6px 10px;font-size:13px;min-width:80px;">
+                    <!-- Dinamik doldurulacak -->
+                </select>
+    <button class="btn btn-sm" style="background:#667eea;color:white;padding:4px 8px;font-size:11px;" onclick="tumAylariSec()">Tümünü Seç</button>
+    <button class="btn btn-sm" style="background:#dc3545;color:white;padding:4px 8px;font-size:11px;" onclick="aySeciminiKaldir()">Seçimi Kaldır</button>
+                <div style="display:flex;gap:3px;flex-wrap:wrap;" id="ayCheckboxContainer">
+                    <label style="font-size:11px;display:flex;align-items:center;gap:2px;cursor:pointer;padding:2px 5px;border:1px solid #ddd;border-radius:4px;">
+                        <input type="checkbox" class="excel-ay-checkbox" value="01" checked> Oca
+                    </label>
+                    <label style="font-size:11px;display:flex;align-items:center;gap:2px;cursor:pointer;padding:2px 5px;border:1px solid #ddd;border-radius:4px;">
+                        <input type="checkbox" class="excel-ay-checkbox" value="02" checked> Şub
+                    </label>
+                    <label style="font-size:11px;display:flex;align-items:center;gap:2px;cursor:pointer;padding:2px 5px;border:1px solid #ddd;border-radius:4px;">
+                        <input type="checkbox" class="excel-ay-checkbox" value="03" checked> Mar
+                    </label>
+                    <label style="font-size:11px;display:flex;align-items:center;gap:2px;cursor:pointer;padding:2px 5px;border:1px solid #ddd;border-radius:4px;">
+                        <input type="checkbox" class="excel-ay-checkbox" value="04" checked> Nis
+                    </label>
+                    <label style="font-size:11px;display:flex;align-items:center;gap:2px;cursor:pointer;padding:2px 5px;border:1px solid #ddd;border-radius:4px;">
+                        <input type="checkbox" class="excel-ay-checkbox" value="05" checked> May
+                    </label>
+                    <label style="font-size:11px;display:flex;align-items:center;gap:2px;cursor:pointer;padding:2px 5px;border:1px solid #ddd;border-radius:4px;">
+                        <input type="checkbox" class="excel-ay-checkbox" value="06" checked> Haz
+                    </label>
+                    <label style="font-size:11px;display:flex;align-items:center;gap:2px;cursor:pointer;padding:2px 5px;border:1px solid #ddd;border-radius:4px;">
+                        <input type="checkbox" class="excel-ay-checkbox" value="07" checked> Tem
+                    </label>
+                    <label style="font-size:11px;display:flex;align-items:center;gap:2px;cursor:pointer;padding:2px 5px;border:1px solid #ddd;border-radius:4px;">
+                        <input type="checkbox" class="excel-ay-checkbox" value="08" checked> Ağu
+                    </label>
+                    <label style="font-size:11px;display:flex;align-items:center;gap:2px;cursor:pointer;padding:2px 5px;border:1px solid #ddd;border-radius:4px;">
+                        <input type="checkbox" class="excel-ay-checkbox" value="09" checked> Eyl
+                    </label>
+                    <label style="font-size:11px;display:flex;align-items:center;gap:2px;cursor:pointer;padding:2px 5px;border:1px solid #ddd;border-radius:4px;">
+                        <input type="checkbox" class="excel-ay-checkbox" value="10" checked> Eki
+                    </label>
+                    <label style="font-size:11px;display:flex;align-items:center;gap:2px;cursor:pointer;padding:2px 5px;border:1px solid #ddd;border-radius:4px;">
+                        <input type="checkbox" class="excel-ay-checkbox" value="11" checked> Kas
+                    </label>
+                    <label style="font-size:11px;display:flex;align-items:center;gap:2px;cursor:pointer;padding:2px 5px;border:1px solid #ddd;border-radius:4px;">
+                        <input type="checkbox" class="excel-ay-checkbox" value="12" checked> Ara
+                    </label>
+                </div>
+                <button class="btn btn-sm ajanda-excel-btn" id="ajandaTopluExcelBtn">📥 Seçili Ayları Excel'e Aktar</button>
+            </div>
+            
+            <span id="ajandaDurum" style="font-size:12px;color:#999;margin-left:10px;"></span>
         </div>
-        <button class="btn btn-success btn-sm" id="ajandaHaftaEkleBtn" style="display:none;">➕ Hafta Ekle</button>
-        <button class="btn btn-warning btn-sm" id="ajandaKaydetBtn" style="display:none;">💾 Kaydet</button>
-        <button class="btn btn-info btn-sm" id="ajandaYenileBtn">🔄 Yenile</button>
     </div>
-    <div id="ajandaHaftalarContainer">
-        <p style="text-align:center;color:#999;">👆 Lütfen bir danışman seçin</p>
+    <div id="ajandaAylikContainer">
+        <p style="text-align:center;color:#999;">⏳ Yükleniyor...</p>
     </div>
 </div>
-
-        <!-- Cari Yönetim Paneli -->
-        <div class="content-panel" id="carilerPanel">
-            <h3>🏢 Cari Yönetimi</h3>
-            <div class="filter-bar">
-                <button class="btn btn-success btn-sm" id="yeniCariBtn">➕ Yeni Cari Ekle</button>
-                <button class="btn btn-info btn-sm" id="carileriYenileBtn">🔄 Listeyi Yenile</button>
-                <button class="btn btn-warning btn-sm" id="excelIceriAktarBtn">📂 Excel'den İçe Aktar</button>
-                <input type="file" id="excelDosyaInput" accept=".xlsx, .xls, .csv" style="display:none;">
-            </div>
-            <div class="table-container">
-                <table id="carilerTablosu">
-                    <thead id="carilerTHead">
-                        <tr>
-                            <th data-col="kod" class="sortable" style="cursor:pointer;">🏢 Cari Kodu <span class="sort-icon">↕️</span></th>
-                            <th data-col="isim" class="sortable" style="cursor:pointer;">📛 Cari Adı <span class="sort-icon">↕️</span></th>
-                            <th data-col="ulke" class="sortable" style="cursor:pointer;">🌍 Ülke <span class="sort-icon">↕️</span></th>
-                            <th data-col="sehir" class="sortable" style="cursor:pointer;">🏙️ Şehir <span class="sort-icon">↕️</span></th>
-                            <th data-col="telefon" class="sortable" style="cursor:pointer;">📞 Telefon <span class="sort-icon">↕️</span></th>
-                            <th data-col="email" class="sortable" style="cursor:pointer;">✉️ E-posta <span class="sort-icon">↕️</span></th>
-                            <th data-col="ilgili_kisi" class="sortable" style="cursor:pointer;">👤 İlgili Kişi <span class="sort-icon">↕️</span></th>
-                            <th data-col="durum" class="sortable" style="cursor:pointer;">📌 Durum <span class="sort-icon">↕️</span></th>
-                            <th>⚙️ İşlemler</th>
-                        </tr>
-                        <tr id="filterRow">
-                            <th><input type="text" placeholder="Kod ara..." class="filter-input" data-filter="kod" style="width:100%;padding:4px;font-size:12px;"></th>
-                            <th><input type="text" placeholder="Cari ara..." class="filter-input" data-filter="isim" style="width:100%;padding:4px;font-size:12px;"></th>
-                            <th><input type="text" placeholder="Ülke ara..." class="filter-input" data-filter="ulke" style="width:100%;padding:4px;font-size:12px;"></th>
-                            <th><input type="text" placeholder="Şehir ara..." class="filter-input" data-filter="sehir" style="width:100%;padding:4px;font-size:12px;"></th>
-                            <th><input type="text" placeholder="Telefon ara..." class="filter-input" data-filter="telefon" style="width:100%;padding:4px;font-size:12px;"></th>
-                            <th><input type="text" placeholder="Email ara..." class="filter-input" data-filter="email" style="width:100%;padding:4px;font-size:12px;"></th>
-                            <th><input type="text" placeholder="Kişi ara..." class="filter-input" data-filter="ilgili_kisi" style="width:100%;padding:4px;font-size:12px;"></th>
-                            <th><input type="text" placeholder="Durum ara..." class="filter-input" data-filter="durum" style="width:100%;padding:4px;font-size:12px;"></th>
-                            <th><button id="filterTemizleBtn" class="btn btn-secondary btn-sm" style="padding:4px 8px;">🗑️ Temizle</button></th>
-                        </tr>
-                    </thead>
-                    <tbody id="carilerTbody">
-                        <tr>
-                            <td colspan="9" style="text-align:center;">⏳ Yükleniyor...</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
 
         <!-- Silinen Kayıtlar Paneli -->
         <div class="content-panel" id="silinenlerPanel">
@@ -1043,6 +1107,8 @@
 
         let KULLANICILAR = {};
 
+        const DANISMAN_LISTESI = ["Barış", "Burak", "Murat", "İbrahim", "Dilshod", "Orkun", "Denizhan"];
+
         const VARSAYILAN_CARILER = {
             "120.01.0001": { kod: "120.01.0001", isim: "YENİ SÜPER GAZ SANAYİ VE TİCARET LİMİTED ŞİRKETİ", ulke: "TÜRKİYE", sehir: "İSTANBUL", telefon: "", email: "", ilgili_kisi: "", olusturan: "sistem", olusturma_tarihi: new Date().toLocaleString('tr-TR'), duzenleyen: "", duzenleme_tarihi: "" },
             "120.01.0002": { kod: "120.01.0002", isim: "TERME TERSANESİ A.Ş.", ulke: "TÜRKİYE", sehir: "ANTALYA", telefon: "", email: "", ilgili_kisi: "", olusturan: "sistem", olusturma_tarihi: new Date().toLocaleString('tr-TR'), duzenleyen: "", duzenleme_tarihi: "" },
@@ -1055,7 +1121,7 @@
         const FIRMA_TIPLERI = ["Perakende", "Toptancı", "Proje Firması", "Son Kullanıcı", "Dijital Sağlayıcı", "Dış Ticaret Firması"];
 
         const ULKELER_SEHIRLER = {
-            "TÜRKİYE": ["ADANA", "ADIYAMAN", "AFYONKARAHİSAR", "AĞRI", "AKSARAY", "AMASYA", "ANKARA", "ANTALYA", "ARDAHAN", "ARTVİN", "AYDIN", "BALIKESİR", "BARTIN", "BATMAN", "BAYBURT", "BİLECİK", "BİNGÖL", "BİTLİS", "BOLU", "BURDUR", "BURSA", "ÇANAKKALE", "ÇANKIRI", "ÇORUM", "DENİZLİ", "DİYARBAKIR", "DÜZCE", "EDİRNE", "ELAZIĞ", "ERZİNCAN", "ERZURUM", "ESKİŞEHİR", "GAZİANTEP", "GİRESUN", "GÜMÜŞHANE", "HAKKARİ", "HATAY", "IĞDIR", "ISPARTA", "İSTANBUL", "İZMİR", "KAHRAMANMARAŞ", "KARABÜK", "KARAMAN", "KARS", "KASTAMONU", "KAYSERİ", "KİLİS", "KIRIKKALE", "KIRKLARELİ", "KIRŞEHİR", "KOCAELİ", "KONYA", "KÜTAHYA", "MALATYA", "MANİSA", "MARDİN", "MERSİN", "MUĞLA", "MUŞ", "NEVŞEHİR", "NİĞDE", "ORDU", "OSMANİYE", "RİZE", "SAKARYA", "SAMSUN", "ŞANLIURFA", "SİİRT", "SİNOP", "SİVAS", "ŞIRNAK", "TEKİRDAĞ", "TOKAT", "TRABZON", "TUNCELİ", "UŞAK", "VAN", "YALOVA", "YOZGAT", "ZONGULDAK"],
+              "TÜRKİYE": ["ADANA", "ADIYAMAN", "AFYONKARAHİSAR", "AĞRI", "AKSARAY", "AMASYA", "ANKARA", "ANTALYA", "ARDAHAN", "ARTVİN", "AYDIN", "BALIKESİR", "BARTIN", "BATMAN", "BAYBURT", "BİLECİK", "BİNGÖL", "BİTLİS", "BOLU", "BURDUR", "BURSA", "ÇANAKKALE", "ÇANKIRI", "ÇORUM", "DENİZLİ", "DİYARBAKIR", "DÜZCE", "EDİRNE", "ELAZIĞ", "ERZİNCAN", "ERZURUM", "ESKİŞEHİR", "GAZİANTEP", "GİRESUN", "GÜMÜŞHANE", "HAKKARİ", "HATAY", "IĞDIR", "ISPARTA", "İSTANBUL", "İZMİR", "KAHRAMANMARAŞ", "KARABÜK", "KARAMAN", "KARS", "KASTAMONU", "KAYSERİ", "KİLİS", "KIRIKKALE", "KIRKLARELİ", "KIRŞEHİR", "KOCAELİ", "KONYA", "KÜTAHYA", "MALATYA", "MANİSA", "MARDİN", "MERSİN", "MUĞLA", "MUŞ", "NEVŞEHİR", "NİĞDE", "ORDU", "OSMANİYE", "RİZE", "SAKARYA", "SAMSUN", "ŞANLIURFA", "SİİRT", "SİNOP", "SİVAS", "ŞIRNAK", "TEKİRDAĞ", "TOKAT", "TRABZON", "TUNCELİ", "UŞAK", "VAN", "YALOVA", "YOZGAT", "ZONGULDAK"],
 
 "AFGANİSTAN": ["BADAHŞAN", "BADGİS", "BAGLAN", "BELH", "BAMYAN", "DAYKUNDİ", "FERAH", "FARYAB", "GAZNİ", "GUR", "HELMEND", "HERAT", "CÜZCAN", "KABİL", "KANDEHAR", "KAPİSA", "HOST", "KUNAR", "KUNDUZ", "LAGMAN", "LOVGAR", "NANGARHAR", "NİMRUZ", "NURİSTAN", "PAKTİKA", "PAKTİYA", "PENCŞİR", "PARVAN", "SAMANGAN", "SAR-İ POL", "TAHAR", "URUZGAN", "VARDAK", "ZABUL"],
 
@@ -1449,6 +1515,7 @@
 
 "ZİMBABVE": ["BULAWAYO", "HARARE", "MANİCALAND", "MASHONALAND MERKEZ", "MASHONALAND DOĞU", "MASHONALAND BATI", "MASVİNGO", "MATABELELAND KUZEY", "MATABELELAND GÜNEY", "MİDLANDS"]
 
+
         };
 
         let currentUser = null;
@@ -1463,14 +1530,17 @@
         let duzenlenecekKullaniciAdi = null;
         const pageSize = 10;
         let selectedRows = new Set();
+// ============ SIRALAMA DEĞİŞKENLERİ ============
+let currentSortColumn = null;
+let currentSortDirection = 'asc'; // 'asc' veya 'desc'
 
         // ============ CARİ SIRALAMA VE FİLTRELEME ============
         let carilerListesi = [];
         let carilerSiralama = { column: 'kod', direction: 'asc' };
         let carilerFiltreler = { kod: '', isim: '', ulke: '', sehir: '', telefon: '', email: '', ilgili_kisi: '', durum: '' };
 
-        // ============ AJANDA DEĞİŞKENLERİ ============
-        let ajandaVerileri = {};
+      // ============ YENİ AJANDA DEĞİŞKENLERİ ============
+let ajandaVerileri = {}; // { "2026-06": { "Barış": { h1: "", h2: "", h3: "", h4: "" }, ... } }
 
         function carileriFiltreleVeSirala() {
             let filtered = [...carilerListesi];
@@ -1685,207 +1755,348 @@
             }
         }
 
-        // ============ AJANDA FONKSİYONLARI ============
-        async function ajandaVerileriniYukle() {
-            try {
-                const doc = await db.collection('ayarlar').doc('ajanda').get();
-                if (doc.exists && doc.data().haftalar) {
-                    ajandaVerileri = doc.data().haftalar;
-                } else {
-                    ajandaVerileri = {};
-                }
-                return true;
-            } catch (e) {
-                console.error('Ajanda yükleme hatası:', e);
-                ajandaVerileri = {};
-                return false;
-            }
+async function ajandaVerileriniYukle() {
+    try {
+        const doc = await db.collection('ayarlar').doc('ajanda_aylik').get();
+        if (doc.exists && doc.data().aylar) {
+            ajandaVerileri = doc.data().aylar;
+        } else {
+            ajandaVerileri = {};
         }
-
-        async function ajandaVerileriniKaydet() {
-            try {
-                await db.collection('ayarlar').doc('ajanda').set({
-                    haftalar: ajandaVerileri,
-                    sonGuncelleme: new Date().toLocaleString('tr-TR')
-                });
-                return true;
-            } catch (e) {
-                console.error('Ajanda kaydetme hatası:', e);
-                return false;
-            }
-        }
-
-        function ajandaPaneliniGoster() {
-            const danismanSelect = document.getElementById('ajandaDanismanSelect');
-            const haftaEkleBtn = document.getElementById('ajandaHaftaEkleBtn');
-            const container = document.getElementById('ajandaHaftalarContainer');
-            if (!danismanSelect || !container) return;
-            danismanSelect.value = '';
-            haftaEkleBtn.style.display = 'none';
-            container.innerHTML = '<p style="text-align:center;color:#999;">👆 Lütfen bir danışman seçin</p>';
-        }
-
-       function ajandaDanismanSecildi() {
-    const danisman = document.getElementById('ajandaDanismanSelect').value;
-    const haftaEkleBtn = document.getElementById('ajandaHaftaEkleBtn');
-    const kaydetBtn = document.getElementById('ajandaKaydetBtn');
-    const container = document.getElementById('ajandaHaftalarContainer');
-    if (!danisman) {
-        haftaEkleBtn.style.display = 'none';
-        kaydetBtn.style.display = 'none';
-        container.innerHTML = '<p style="text-align:center;color:#999;">👆 Lütfen bir danışman seçin</p>';
-        return;
+        return true;
+    } catch (e) {
+        console.error('Ajanda yükleme hatası:', e);
+        ajandaVerileri = {};
+        return false;
     }
-    if (['barış', 'burak', 'sena'].includes(currentUser)) {
-        haftaEkleBtn.style.display = 'inline-block';
-        kaydetBtn.style.display = 'inline-block';
-    } else {
-        haftaEkleBtn.style.display = 'none';
-        kaydetBtn.style.display = 'none';
-    }
-    ajandaHaftalariGoster(danisman);
 }
 
-        function ajandaHaftaEkle() {
-    const danisman = document.getElementById('ajandaDanismanSelect').value;
-    if (!danisman) return alert('Lütfen önce danışman seçin!');
-    if (!ajandaVerileri[danisman]) {
-        ajandaVerileri[danisman] = [];
+async function ajandaVerileriniKaydet() {
+    try {
+        await db.collection('ayarlar').doc('ajanda_aylik').set({
+            aylar: ajandaVerileri,
+            sonGuncelleme: new Date().toLocaleString('tr-TR')
+        });
+        return true;
+    } catch (e) {
+        console.error('Ajanda kaydetme hatası:', e);
+        return false;
     }
-    const yeniHafta = {
-        id: 'hafta_' + Date.now(),
-        olusturmaTarihi: new Date().toLocaleString('tr-TR'),
-        olusturan: currentUser,
-        degistiren: '',
-        degistirmeTarihi: '',
-        gunler: [
-            { tarih: '', ulke: '', sehir: '', cari: '', not: '' },
-            { tarih: '', ulke: '', sehir: '', cari: '', not: '' },
-            { tarih: '', ulke: '', sehir: '', cari: '', not: '' },
-            { tarih: '', ulke: '', sehir: '', cari: '', not: '' },
-            { tarih: '', ulke: '', sehir: '', cari: '', not: '' },
-            { tarih: '', ulke: '', sehir: '', cari: '', not: '' },
-            { tarih: '', ulke: '', sehir: '', cari: '', not: '' }
-        ]
-    };
-    ajandaVerileri[danisman].push(yeniHafta);
-    ajandaVerileriniKaydet().then(() => {
-        ajandaHaftalariGoster(danisman);
-        alert('✅ Yeni hafta eklendi ve kaydedildi!');
-    }).catch(err => {
-        alert('❌ Kayıt hatası: ' + err.message);
+}
+
+function yilListesiniOlustur() {
+    const yilSelect = document.getElementById('ajandaYilSelect');
+    if (!yilSelect) return;
+    
+    const mevcutYillar = new Set();
+    Object.keys(ajandaVerileri).forEach(key => {
+        const yil = key.split('-')[0];
+        if (/^\d{4}$/.test(yil)) {
+            mevcutYillar.add(yil);
+        }
+    });
+    
+    const currentYear = new Date().getFullYear().toString();
+    mevcutYillar.add(currentYear);
+    
+    for (let i = 1; i <= 5; i++) {
+        mevcutYillar.add((new Date().getFullYear() + i).toString());
+    }
+    
+    for (let i = 1; i <= 2; i++) {
+        mevcutYillar.add((new Date().getFullYear() - i).toString());
+    }
+    
+    const siraliYillar = Array.from(mevcutYillar).sort();
+    
+    yilSelect.innerHTML = siraliYillar.map(y => 
+        `<option value="${y}" ${y === currentYear ? 'selected' : ''}>${y}</option>`
+    ).join('');
+}
+
+function ajandaPaneliniGoster() {
+    const kaydetBtn = document.getElementById('ajandaKaydetBtn');
+    const durumEl = document.getElementById('ajandaDurum');
+    
+    const isAdmin = ['barış', 'burak', 'sena'].includes(currentUser);
+    if (isAdmin) {
+        kaydetBtn.style.display = 'inline-block';
+        durumEl.textContent = '✏️ Düzenleme yetkiniz var';
+        durumEl.style.color = '#28a745';
+    } else {
+        kaydetBtn.style.display = 'none';
+        durumEl.textContent = '👁️ Sadece görüntüleme';
+        durumEl.style.color = '#667eea';
+    }
+    
+    yilListesiniOlustur();
+    
+    const aySelect = document.getElementById('ajandaAySelect');
+    if (aySelect) {
+        const currentMonth = String(new Date().getMonth() + 1).padStart(2, '0');
+        aySelect.value = currentMonth;
+    }
+    
+    const yilSelect = document.getElementById('ajandaYilSelect');
+    if (yilSelect && aySelect) {
+        const ayKey = yilSelect.value + '-' + aySelect.value;
+        ajandaAylikGoster(ayKey);
+    }
+ // 👇 BU SATIRI EKLEYİN (kapanış } parantezinden hemen önce)
+    setTimeout(() => {
+        excelYilSenkronize();
+    }, 100);
+}
+
+function ajandaAylikGoster(ayKey) {
+    const container = document.getElementById('ajandaAylikContainer');
+    if (!container) return;
+    
+    const isAdmin = ['barış', 'burak', 'sena'].includes(currentUser);
+    
+    if (!ayKey || !ayKey.includes('-')) {
+        container.innerHTML = '<p style="text-align:center;color:#999;">Lütfen geçerli bir ay seçin</p>';
+        return;
+    }
+    
+    const [yil, ay] = ayKey.split('-');
+    const ayAdi = new Date(parseInt(yil), parseInt(ay) - 1).toLocaleString('tr-TR', { month: 'long', year: 'numeric' });
+    
+    if (!ajandaVerileri[ayKey]) {
+        ajandaVerileri[ayKey] = {};
+        DANISMAN_LISTESI.forEach(d => {
+            ajandaVerileri[ayKey][d] = { h1: '', h2: '', h3: '', h4: '' };
+        });
+        ajandaVerileriniKaydet().catch(e => console.log('Otomatik kayıt hatası:', e));
+    }
+    
+    DANISMAN_LISTESI.forEach(d => {
+        if (!ajandaVerileri[ayKey][d]) {
+            ajandaVerileri[ayKey][d] = { h1: '', h2: '', h3: '', h4: '' };
+        }
+    });
+    
+    const suankiAy = new Date().getFullYear() + '-' + String(new Date().getMonth() + 1).padStart(2, '0');
+    let ayDurumu = '';
+    if (ayKey < suankiAy) {
+        ayDurumu = '<span style="background:#ffc107;color:#333;padding:2px 8px;border-radius:10px;font-size:11px;">📅 Geçmiş Ay</span>';
+    } else if (ayKey === suankiAy) {
+        ayDurumu = '<span style="background:#28a745;color:white;padding:2px 8px;border-radius:10px;font-size:11px;">✅ Şu Anki Ay</span>';
+    } else {
+        ayDurumu = '<span style="background:#667eea;color:white;padding:2px 8px;border-radius:10px;font-size:11px;">🔮 Gelecek Ay</span>';
+    }
+    
+    let html = `
+    <div class="ajanda-aylik-container">
+        <div class="ajanda-aylik-baslik">
+            <h4>📅 ${ayAdi}</h4>
+            <div style="display:flex;gap:10px;align-items:center;">
+                ${ayDurumu}
+                <span style="font-size:12px;">${isAdmin ? '✏️ Düzenlenebilir' : '👁️ Salt Okunur'}</span>
+            </div>
+        </div>
+        <div style="overflow-x:auto;">
+            <table class="ajanda-tablo">
+                <thead>
+                    <tr>
+                        <th class="danisman-baslik">Danışman</th>
+                        <th class="hafta-baslik">1. Hafta<br><small style="font-weight:normal;"></small></th>
+                        <th class="hafta-baslik">2. Hafta<br><small style="font-weight:normal;"></small></th>
+                        <th class="hafta-baslik">3. Hafta<br><small style="font-weight:normal;"></small></th>
+                        <th class="hafta-baslik">4. Hafta<br><small style="font-weight:normal;"></small></th>
+                    </tr>
+                </thead>
+                <tbody>`;
+    
+    DANISMAN_LISTESI.forEach(danisman => {
+        const veri = ajandaVerileri[ayKey][danisman] || { h1: '', h2: '', h3: '', h4: '' };
+        html += `
+                    <tr>
+                        <td class="danisman-hucre">${danisman}</td>
+                        <td><textarea 
+                            class="${isAdmin ? '' : 'readonly-textarea'}"
+                            ${isAdmin ? '' : 'readonly'}
+                            data-ay="${ayKey}" 
+                            data-danisman="${danisman}" 
+                            data-hafta="h1"
+                            onchange="ajandaHucreGuncelle(this)"
+                            placeholder="1. hafta...">${veri.h1 || ''}</textarea></td>
+                        <td><textarea 
+                            class="${isAdmin ? '' : 'readonly-textarea'}"
+                            ${isAdmin ? '' : 'readonly'}
+                            data-ay="${ayKey}" 
+                            data-danisman="${danisman}" 
+                            data-hafta="h2"
+                            onchange="ajandaHucreGuncelle(this)"
+                            placeholder="2. hafta...">${veri.h2 || ''}</textarea></td>
+                        <td><textarea 
+                            class="${isAdmin ? '' : 'readonly-textarea'}"
+                            ${isAdmin ? '' : 'readonly'}
+                            data-ay="${ayKey}" 
+                            data-danisman="${danisman}" 
+                            data-hafta="h3"
+                            onchange="ajandaHucreGuncelle(this)"
+                            placeholder="3. hafta...">${veri.h3 || ''}</textarea></td>
+                        <td><textarea 
+                            class="${isAdmin ? '' : 'readonly-textarea'}"
+                            ${isAdmin ? '' : 'readonly'}
+                            data-ay="${ayKey}" 
+                            data-danisman="${danisman}" 
+                            data-hafta="h4"
+                            onchange="ajandaHucreGuncelle(this)"
+                            placeholder="4. hafta...">${veri.h4 || ''}</textarea></td>
+                    </tr>`;
+    });
+    
+    html += `
+                </tbody>
+            </table>
+        </div>
+    </div>`;
+    
+    container.innerHTML = html;
+}
+
+function ajandaHucreGuncelle(textarea) {
+    const ay = textarea.dataset.ay;
+    const danisman = textarea.dataset.danisman;
+    const hafta = textarea.dataset.hafta;
+    const deger = textarea.value;
+    
+    if (!ajandaVerileri[ay]) {
+        ajandaVerileri[ay] = {};
+    }
+    if (!ajandaVerileri[ay][danisman]) {
+        ajandaVerileri[ay][danisman] = { h1: '', h2: '', h3: '', h4: '' };
+    }
+    
+    ajandaVerileri[ay][danisman][hafta] = deger;
+    
+    const kaydetBtn = document.getElementById('ajandaKaydetBtn');
+    if (kaydetBtn && kaydetBtn.style.display !== 'none') {
+        kaydetBtn.style.background = '#ffc107';
+        kaydetBtn.style.color = '#333';
+        kaydetBtn.textContent = '💾 Değişiklikleri Kaydet (Kaydedilmemiş)';
+    }
+}
+
+async function ajandaDegisiklikleriKaydet() {
+    try {
+        await ajandaVerileriniKaydet();
+        const kaydetBtn = document.getElementById('ajandaKaydetBtn');
+        if (kaydetBtn) {
+            kaydetBtn.style.background = '#28a745';
+            kaydetBtn.style.color = 'white';
+            kaydetBtn.textContent = '💾 Tüm Değişiklikleri Kaydet';
+        }
+        alert('✅ Ajanda başarıyla kaydedildi!');
+    } catch (e) {
+        alert('❌ Kayıt hatası: ' + e.message);
+    }
+}
+// Tüm ay checkbox'larını seç
+function tumAylariSec() {
+    document.querySelectorAll('.excel-ay-checkbox').forEach(cb => {
+        cb.checked = true;
     });
 }
 
-        function ajandaHaftaSil(danisman, haftaId) {
-            if (!confirm('Bu haftayı silmek istediğinize emin misiniz?')) return;
-            if (ajandaVerileri[danisman]) {
-                ajandaVerileri[danisman] = ajandaVerileri[danisman].filter(h => h.id !== haftaId);
-                ajandaVerileriniKaydet().then(() => {
-                    ajandaHaftalariGoster(danisman);
-                    alert('✅ Hafta silindi!');
-                });
-            }
-        }
+// Tüm ay checkbox'larının seçimini kaldır
+function aySeciminiKaldir() {
+    document.querySelectorAll('.excel-ay-checkbox').forEach(cb => {
+        cb.checked = false;
+    });
+}
+function ajandaTopluExcelAktar() {
+    const yilSelect = document.getElementById('ajandaExcelYilSelect');
+    if (!yilSelect) return;
+    
+    const yil = yilSelect.value;
+    
+    // Seçili ayları topla
+    const seciliAylar = [];
+    document.querySelectorAll('.excel-ay-checkbox:checked').forEach(cb => {
+        seciliAylar.push(cb.value);
+    });
+    
+    if (seciliAylar.length === 0) {
+        alert('⚠️ Lütfen en az bir ay seçin!');
+        return;
+    }
+    
+    // Seçili ayları sırala
+    seciliAylar.sort();
+    
+    // Ay adları
+    const ayAdlari = {
+        '01': 'Ocak', '02': 'Şubat', '03': 'Mart', '04': 'Nisan',
+        '05': 'Mayıs', '06': 'Haziran', '07': 'Temmuz', '08': 'Ağustos',
+        '09': 'Eylül', '10': 'Ekim', '11': 'Kasım', '12': 'Aralık'
+    };
+    
+    // Excel başlıkları
+    const basliklar = ['Danışman'];
+    
+    // Her ay için başlık ekle (4 hafta sütunu)
+    seciliAylar.forEach(ay => {
+        const ayAdi = ayAdlari[ay];
+        basliklar.push(`${ayAdi} 1.Hafta`, `${ayAdi} 2.Hafta`, `${ayAdi} 3.Hafta`, `${ayAdi} 4.Hafta`);
+    });
+    
+    // CSV başlangıcı
+    let csv = '\uFEFF' + basliklar.map(b => '"' + b.replace(/"/g, '""') + '"').join(';') + '\n';
+    
+    // Her danışman için satır oluştur
+    DANISMAN_LISTESI.forEach(danisman => {
+        const satir = [danisman];
+        
+        seciliAylar.forEach(ay => {
+            const ayKey = yil + '-' + ay;
+            const veri = ajandaVerileri[ayKey] && ajandaVerileri[ayKey][danisman] 
+                ? ajandaVerileri[ayKey][danisman] 
+                : { h1: '', h2: '', h3: '', h4: '' };
+            
+            satir.push(veri.h1 || '');
+            satir.push(veri.h2 || '');
+            satir.push(veri.h3 || '');
+            satir.push(veri.h4 || '');
+        });
+        
+        csv += satir.map(h => '"' + String(h).replace(/"/g, '""') + '"').join(';') + '\n';
+    });
+    
+    // Dosyayı indir
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    
+    // Dosya adı
+    const ayAraligi = seciliAylar.length === 1 
+        ? ayAdlari[seciliAylar[0]] 
+        : ayAdlari[seciliAylar[0]] + '-' + ayAdlari[seciliAylar[seciliAylar.length - 1]];
+    
+    a.download = `iceinox_ajanda_${yil}_${ayAraligi}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    
+    const seciliAyIsimleri = seciliAylar.map(a => ayAdlari[a]).join(', ');
+    alert(`✅ ${yil} yılı ${seciliAyIsimleri} ayları Excel'e aktarıldı!\n\n📁 Dosya: iceinox_ajanda_${yil}_${ayAraligi}.csv\n📊 ${seciliAylar.length} ay, ${DANISMAN_LISTESI.length} danışman`);
+}
 
-        function ajandaGunGuncelle(danisman, haftaId, gunIndex, alan, deger) {
-    if (ajandaVerileri[danisman]) {
-        const hafta = ajandaVerileri[danisman].find(h => h.id === haftaId);
-        if (hafta && hafta.gunler[gunIndex]) {
-            hafta.gunler[gunIndex][alan] = deger;
-            hafta.degistiren = currentUser;
-            hafta.degistirmeTarihi = new Date().toLocaleString('tr-TR');
-        }
+// Excel yıl seçimini ajanda yılı ile senkronize et
+function excelYilSenkronize() {
+    const ajandaYil = document.getElementById('ajandaYilSelect');
+    const excelYil = document.getElementById('ajandaExcelYilSelect');
+    if (ajandaYil && excelYil) {
+        excelYil.innerHTML = ajandaYil.innerHTML;
+        excelYil.value = ajandaYil.value;
     }
 }
 
-        function ajandaHaftalariGoster(danisman) {
-            const container = document.getElementById('ajandaHaftalarContainer');
-            if (!container) return;
-            if (!ajandaVerileri[danisman] || ajandaVerileri[danisman].length === 0) {
-                container.innerHTML = '<p style="text-align:center;color:#999;">Bu danışman için henüz haftalık plan bulunmuyor.</p>';
-                return;
-            }
-            const isAdmin = ['barış', 'burak', 'sena'].includes(currentUser);
-            const canEdit = isAdmin;
-            let html = '';
-            const gunIsimleri = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi', 'Pazar'];
-
-            ajandaVerileri[danisman].forEach((hafta, haftaIndex) => {
-                html += `
-                <div class="ajanda-hafta-container">
-                    <div class="ajanda-hafta-baslik">
-                        <h4>📅 ${haftaIndex + 1}. Hafta</h4>
-                        ${canEdit ? `<button class="btn btn-danger btn-sm" onclick="ajandaHaftaSil('${danisman}', '${hafta.id}')">🗑️ Haftayı Sil</button>` : ''}
-                    </div>
-                    <div class="ajanda-row-header">
-                        <div>📅 Tarih</div>
-                        <div>🌍 Ülke</div>
-                        <div>🏙️ Şehir</div>
-                        <div>🏢 Cari</div>
-			<div>📝 Not</div>
-			<div>📌 Durum</div>
-                        <div></div>
-                    </div>`;
-                hafta.gunler.forEach((gun, gunIndex) => {
-                    const gunAdi = gunIsimleri[gunIndex];
-                    html += `
-                    <div class="ajanda-row">
-                        <div class="form-group">
-                            <div class="ajanda-gun-baslik">${gunAdi}</div>
-                            <input type="date" value="${gun.tarih || ''}" 
-                                   class="${canEdit ? '' : 'readonly-field'}"
-                                   ${canEdit ? '' : 'readonly'} 
-                                   onchange="ajandaGunGuncelle('${danisman}', '${hafta.id}', ${gunIndex}, 'tarih', this.value)">
-                        </div>
-                       <div class="form-group">
-    <label>Ülke</label>
-    <input type="text" value="${gun.ulke || ''}" 
-           class="${canEdit ? '' : 'readonly-field'}"
-           ${canEdit ? '' : 'readonly'} 
-           onchange="ajandaGunGuncelle('${danisman}', '${hafta.id}', ${gunIndex}, 'ulke', this.value)"
-           placeholder="Ülke adı">
-</div>
-                        <div class="form-group">
-                            <label>Şehir</label>
-                            <input type="text" value="${gun.sehir || ''}" 
-                                   class="${canEdit ? '' : 'readonly-field'}"
-                                   ${canEdit ? '' : 'readonly'} 
-                                   onchange="ajandaGunGuncelle('${danisman}', '${hafta.id}', ${gunIndex}, 'sehir', this.value)"
-                                   placeholder="Şehir adı">
-                        </div>
-                        <div class="form-group">
-                            <label>Cari</label>
-                            <input type="text" value="${gun.cari || ''}" 
-                                   class="${canEdit ? '' : 'readonly-field'}"
-                                   ${canEdit ? '' : 'readonly'} 
-                                   onchange="ajandaGunGuncelle('${danisman}', '${hafta.id}', ${gunIndex}, 'cari', this.value)"
-                                   placeholder="Cari adı girin">
- </div>
-                       <div class="form-group">
-    <label>Not</label>
-    <input type="text" value="${gun.not || ''}" 
-           class="${canEdit ? '' : 'readonly-field'}"
-           ${canEdit ? '' : 'readonly'} 
-           onchange="ajandaGunGuncelle('${danisman}', '${hafta.id}', ${gunIndex}, 'not', this.value)"
-           placeholder="Not ekleyin">
-</div>
-<div style="font-size:10px; padding-top:5px;">
-    ${gunIndex === 0 ? `
-        <span style="color:#28a745;">👤 Oluşturan:<br>${hafta.olusturan || 'Bilinmiyor'}</span><br>
-        ${hafta.degistiren ? '<span style="color:#ffc107;">✏️ Değiştiren:<br>' + hafta.degistiren + '</span>' : '<span style="color:#999;">Henüz değiştirilmedi</span>'}
-    ` : ''}
-</div>
-                        <div style="display:flex;align-items:flex-end;justify-content:center;">
-                            <span style="font-size:11px;color:#999;">Gün ${gunIndex + 1}</span>
-                        </div>
-                    </div>`;
-                });
-                html += '</div>';
-            });
-            container.innerHTML = html;
-        }
-
+        // Diğer fonksiyonlar (cari, kullanıcı, kayıt işlemleri) aynı kalacak...
+        // [ÖNCEKİ FONKSİYONLARIN TAMAMI BURADA KORUNMUŞTUR]
+        
         function cariBilgileriniDoldur(cariKod) {
             const secilenCari = CARILER[cariKod];
             if (!secilenCari) return;
@@ -2157,18 +2368,6 @@
                 kapatKullaniciModal();
                 guncelleKullaniciListesi(); } else { alert('❌ Kayıt sırasında bir hata oluştu!'); }
         }
-async function ajandaDegisiklikleriKaydet() {
-    const danisman = document.getElementById('ajandaDanismanSelect').value;
-    if (!danisman) return alert('Lütfen önce danışman seçin!');
-    
-    try {
-        await ajandaVerileriniKaydet();
-        alert('✅ Tüm değişiklikler kaydedildi!');
-        ajandaHaftalariGoster(danisman);
-    } catch (e) {
-        alert('❌ Kayıt hatası: ' + e.message);
-    }
-}
 
         async function kullaniciSil(kullaniciAdi) {
             if (!confirm(`⚠️ "${kullaniciAdi}" kullanıcısını silmek istediğinize emin misiniz?\n\nBu işlem geri alınamaz!`))
@@ -2190,8 +2389,11 @@ async function ajandaDegisiklikleriKaydet() {
         window.silinenCariDetay = silinenCariDetay;
         window.kullaniciDuzenle = kullaniciDuzenle;
         window.kullaniciSil = kullaniciSil;
-        window.ajandaHaftaSil = ajandaHaftaSil;
-        window.ajandaGunGuncelle = ajandaGunGuncelle;
+	window.ajandaHucreGuncelle = ajandaHucreGuncelle;
+	window.ajandaTopluExcelAktar = ajandaTopluExcelAktar;
+	window.tumAylariSec = tumAylariSec;
+	window.aySeciminiKaldir = aySeciminiKaldir;
+window.kayitlariSirala = kayitlariSirala;
 
         document.addEventListener('DOMContentLoaded', async () => {
             await kullanicilariYukle();
@@ -2330,29 +2532,66 @@ async function ajandaDegisiklikleriKaydet() {
             const loginPasswordInput = document.getElementById('loginPassword');
             if (loginPasswordInput) loginPasswordInput.addEventListener('keypress', function(e) { if (e.key === 'Enter')
                     login(); });
+// Sıralama event listener'ları
+document.querySelectorAll('#kayitlarTablosu .sortable').forEach(th => {
+    th.addEventListener('click', function() {
+        const column = this.dataset.sort;
+        if (column) {
+            kayitlariSirala(column);
+        }
+    });
+});
 
-            // Ajanda event listener'ları
-            const ajandaDanismanSelect = document.getElementById('ajandaDanismanSelect');
-            if (ajandaDanismanSelect) {
-                ajandaDanismanSelect.addEventListener('change', ajandaDanismanSecildi);
-            }
+// Ajanda event listener'ları
+const ajandaYilSelect = document.getElementById('ajandaYilSelect');
+const ajandaAySelect = document.getElementById('ajandaAySelect');
+
+// TOPLU EXCEL AKTARMA BUTONU (YENİ)
+const ajandaTopluExcelBtn = document.getElementById('ajandaTopluExcelBtn');
+if (ajandaTopluExcelBtn) {
+    ajandaTopluExcelBtn.addEventListener('click', ajandaTopluExcelAktar);
+}
+
+// Excel yıl dropdown'ını ajanda yılı ile senkronize et
+if (ajandaYilSelect) {
+    ajandaYilSelect.addEventListener('change', function() {
+        excelYilSenkronize();
+    });
+}
+
+if (ajandaYilSelect && ajandaAySelect) {
+    const ajandaGuncelle = function() {
+        const yil = ajandaYilSelect.value;
+        const ay = ajandaAySelect.value;
+        if (yil && ay) {
+            ajandaAylikGoster(yil + '-' + ay);
+        }
+    };
+    
+    ajandaYilSelect.addEventListener('change', ajandaGuncelle);
+    ajandaAySelect.addEventListener('change', ajandaGuncelle);
+}
+
 const ajandaKaydetBtn = document.getElementById('ajandaKaydetBtn');
 if (ajandaKaydetBtn) {
     ajandaKaydetBtn.addEventListener('click', ajandaDegisiklikleriKaydet);
 }
-            const ajandaHaftaEkleBtn = document.getElementById('ajandaHaftaEkleBtn');
-            if (ajandaHaftaEkleBtn) {
-                ajandaHaftaEkleBtn.addEventListener('click', ajandaHaftaEkle);
-            }
-            const ajandaYenileBtn = document.getElementById('ajandaYenileBtn');
-            if (ajandaYenileBtn) {
-                ajandaYenileBtn.addEventListener('click', async () => {
-                    await ajandaVerileriniYukle();
-                    const danisman = document.getElementById('ajandaDanismanSelect').value;
-                    if (danisman) { ajandaHaftalariGoster(danisman);
-                        alert('✅ Ajanda verileri yenilendi!'); }
-                });
-            }
+
+const ajandaYenileBtn = document.getElementById('ajandaYenileBtn');
+if (ajandaYenileBtn) {
+    ajandaYenileBtn.addEventListener('click', async () => {
+        await ajandaVerileriniYukle();
+        yilListesiniOlustur();
+        const yilSelect = document.getElementById('ajandaYilSelect');
+        const aySelect = document.getElementById('ajandaAySelect');
+        if (yilSelect && aySelect) {
+            const ayKey = yilSelect.value + '-' + aySelect.value;
+            ajandaAylikGoster(ayKey);
+            alert('✅ Ajanda verileri Firebase\'den yenilendi!');
+        }
+    });
+}
+            
             const excelIceriAktarBtn = document.getElementById('excelIceriAktarBtn');
             if (excelIceriAktarBtn) {
                 excelIceriAktarBtn.addEventListener('click', () => { document.getElementById('excelDosyaInput')
@@ -2586,6 +2825,9 @@ if (ajandaKaydetBtn) {
         }
 
         function kayitlariGoster() {
+ document.querySelectorAll('#kayitlarTablosu .sortable').forEach(th => {
+        th.classList.remove('sort-asc', 'sort-desc');
+    });
             filtrelenmisKayitlar = currentUserYetki === 'tum' ? [...tumKayitlar] : tumKayitlar.filter(k => k.kaydeden ===
                 currentUser);
             const temsilciSelect = document.getElementById('filtreTemsilci');
@@ -2637,8 +2879,80 @@ if (ajandaKaydetBtn) {
             sayfalaVeGoster();
         }
 
-        function sayfalaVeGoster() {
-            const totalPages = Math.ceil(filtrelenmisKayitlar.length / pageSize);
+        function kayitlariSirala(column) {
+    // Aynı sütuna tıklandıysa yönü değiştir
+    if (currentSortColumn === column) {
+        currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+        currentSortColumn = column;
+        currentSortDirection = 'asc';
+    }
+    
+    // Sıralama simgelerini güncelle
+    document.querySelectorAll('#kayitlarTablosu .sortable').forEach(th => {
+        th.classList.remove('sort-asc', 'sort-desc');
+    });
+    
+    const clickedTh = document.querySelector(`#kayitlarTablosu .sortable[data-sort="${column}"]`);
+    if (clickedTh) {
+        clickedTh.classList.add(currentSortDirection === 'asc' ? 'sort-asc' : 'sort-desc');
+    }
+    
+    // SIRALAMA FONKSİYONU
+    const sortFunction = (a, b) => {
+        let valA = a[column] || '';
+        let valB = b[column] || '';
+        
+        // Tarih sütunu için özel sıralama
+        if (column === 'tarih') {
+            valA = valA || '0000-00-00';
+            valB = valB || '0000-00-00';
+            return currentSortDirection === 'asc' 
+                ? valA.localeCompare(valB) 
+                : valB.localeCompare(valA);
+        }
+        
+        // Saat sütunu için özel sıralama
+        if (column === 'ziyaret_saati') {
+            valA = valA || '00:00';
+            valB = valB || '00:00';
+            return currentSortDirection === 'asc' 
+                ? valA.localeCompare(valB) 
+                : valB.localeCompare(valA);
+        }
+        
+        // Cari kodu için numerik sıralama
+        if (column === 'cari_kod') {
+            const numA = parseInt(String(valA).replace(/[^0-9]/g, '')) || 0;
+            const numB = parseInt(String(valB).replace(/[^0-9]/g, '')) || 0;
+            return currentSortDirection === 'asc' ? numA - numB : numB - numA;
+        }
+        
+        // Diğer sütunlar için alfabetik sıralama
+        valA = String(valA).toLowerCase().trim();
+        valB = String(valB).toLowerCase().trim();
+        
+        if (valA < valB) return currentSortDirection === 'asc' ? -1 : 1;
+        if (valA > valB) return currentSortDirection === 'asc' ? 1 : -1;
+        return 0;
+    };
+    
+    // HEM TÜM KAYITLARI HEM DE FİLTRELENMİŞ KAYITLARI SIRALA
+    tumKayitlar.sort(sortFunction);
+    filtrelenmisKayitlar.sort(sortFunction);
+    
+    // Sayfayı güncelle (filtreyi bozmadan!)
+    currentPage = 1;
+    selectedRows.clear();
+    const tumunuSec = document.getElementById('tumunuSec');
+    if (tumunuSec) tumunuSec.checked = false;
+    guncelleSecimSayisi();
+    sayfalaVeGoster();
+}
+
+// 👇 BURADA sayfalaVeGoster BAŞLIYOR
+	function sayfalaVeGoster() {
+ 	    const totalPages = Math.ceil(filtrelenmisKayitlar.length / pageSize);
             const start = (currentPage - 1) * pageSize;
             const pageData = filtrelenmisKayitlar.slice(start, start + pageSize);
             const tbody = document.getElementById('kayitlarTbody');
@@ -2986,6 +3300,11 @@ if (ajandaKaydetBtn) {
         window.kapatDuzenleModal = kapatDuzenleModal;
         window.kapatCariModal = kapatCariModal;
         window.kapatKullaniciModal = kapatKullaniciModal;
+	window.ajandaHucreGuncelle = ajandaHucreGuncelle;
+	window.ajandaTopluExcelAktar = ajandaTopluExcelAktar;
+	window.tumAylariSec = tumAylariSec;
+	window.aySeciminiKaldir = aySeciminiKaldir;
+window.kayitlariSirala = kayitlariSirala;
     </script>
 </body>
 </html>
