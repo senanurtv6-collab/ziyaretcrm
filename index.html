@@ -1631,15 +1631,15 @@ let ajandaVerileri = {}; // { "2026-06": { "Barış": { h1: "", h2: "", h3: "", 
             carileriGuncelleVeGoster();
         }
 
-        async function carileriYukle() {
-            try {
-                const doc = await db.collection('ayarlar').doc('cariler').get();
-                if (doc.exists && doc.data().cariler) {
-                    CARILER = doc.data().cariler;
-                } else {
-                    CARILER = JSON.parse(JSON.stringify(VARSAYILAN_CARILER));
-                    await carileriKaydet();
-                }
+async function carileriYukle() {
+    try {
+        const doc = await db.collection('ayarlar').doc('cariler').get();
+        if (doc.exists && doc.data().cariler) {
+            CARILER = doc.data().cariler;
+        } else {
+            CARILER = JSON.parse(JSON.stringify(VARSAYILAN_CARILER));
+            await carileriKaydet(); // Firebase'e kaydetmeyi dener
+        }
                 const siraliCariler = {};
                 Object.keys(CARILER).sort((a, b) => {
                     const numA = parseInt(a.split('.').pop()) || 0;
