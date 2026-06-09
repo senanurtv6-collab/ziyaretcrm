@@ -939,7 +939,39 @@
         <p style="text-align:center;color:#999;">⏳ Yükleniyor...</p>
     </div>
 </div>
-
+        <!-- Cari Yönetimi Paneli -->
+        <div class="content-panel" id="carilerPanel">
+            <h3>🏢 Cari Yönetimi</h3>
+            <div class="filter-bar">
+                <input type="text" id="cariKodFiltre" class="filter-input" data-filter="kod" placeholder="Cari Kodu filtrele">
+                <input type="text" id="cariIsimFiltre" class="filter-input" data-filter="isim" placeholder="Cari Adı filtrele">
+                <input type="text" id="cariUlkeFiltre" class="filter-input" data-filter="ulke" placeholder="Ülke filtrele">
+                <input type="text" id="cariSehirFiltre" class="filter-input" data-filter="sehir" placeholder="Şehir filtrele">
+                <button class="btn btn-primary btn-sm" id="yeniCariBtn">➕ Yeni Cari Ekle</button>
+                <button class="btn btn-secondary btn-sm" id="carileriYenileBtn">🔄 Yenile</button>
+                <button class="btn btn-secondary btn-sm" id="filterTemizleBtn">🗑️ Filtreleri Temizle</button>
+            </div>
+            <div class="table-container">
+                <table id="carilerTablosu">
+                    <thead id="carilerTHead">
+                        <tr>
+                            <th class="sortable" data-col="kod">Cari Kodu</th>
+                            <th class="sortable" data-col="isim">Cari Adı</th>
+                            <th class="sortable" data-col="ulke">Ülke</th>
+                            <th class="sortable" data-col="sehir">Şehir</th>
+                            <th>Telefon</th>
+                            <th>E-posta</th>
+                            <th>İlgili Kişi</th>
+                            <th>Durum</th>
+                            <th>İşlem</th>
+                        </tr>
+                    </thead>
+                    <tbody id="carilerTbody">
+                        <tr><td colspan="9" style="text-align:center;">⏳ Cariler yükleniyor......</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
         <!-- Silinen Kayıtlar Paneli -->
         <div class="content-panel" id="silinenlerPanel">
             <h3>🗑️ Silinen Kayıtlar <small style="color:#999;">(Sadece yetkili kullanıcılar görebilir)</small></h3>
