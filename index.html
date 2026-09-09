@@ -1658,9 +1658,18 @@
 
         firebaseDurum('☁️ Hazır', true);
 
+        function ziyaretleriTumuGorur() {
+            return currentUserYetki === 'tum' || ['barış', 'burak', 'sena'].includes(currentUser);
+        }
+
         async function kayitlariYukle() {
             try {
-                const snapshot = await db.collection('ziyaretler').get();
+                let snapshot;
+                if (ziyaretleriTumuGorur()) {
+                    snapshot = await db.collection('ziyaretler').get();
+                } else {
+                    snapshot = await db.collection('ziyaretler').where('kaydeden', '==', currentUser).get();
+                }
                 tumKayitlar = [];
                 silinenKayitlar = [];
                 snapshot.forEach(doc => {
