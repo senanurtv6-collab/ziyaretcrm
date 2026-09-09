@@ -10,6 +10,8 @@
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js">
     </script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js">
+    </script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js">
     </script>
 
@@ -132,6 +134,43 @@
             text-align: center;
             margin-top: 15px;
             display: none;
+        }
+        .login-ayirici {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 18px 0 14px;
+            color: #999;
+            font-size: 12px;
+        }
+        .login-ayirici::before,
+        .login-ayirici::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #eee;
+        }
+        .btn-google {
+            width: 100%;
+            background: #fff;
+            color: #333;
+            border: 1px solid #dadce0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .btn-google:hover {
+            background: #f8f9fa;
+            transform: none;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+        }
+        .login-not {
+            margin-top: 14px;
+            font-size: 12px;
+            color: #888;
+            text-align: center;
+            line-height: 1.5;
         }
         .main-container {
             display: none;
@@ -725,10 +764,13 @@
         <div class="login-card">
             <h1>📅 <span>ZİYARET</span> PLANLAMA</h1>
             <div class="subtitle">Iceinox CRM - Müşteri İlişkileri Yönetimi<br><span id="firebaseStatus" class="status-badge status-offline">Bağlanıyor...</span></div>
-            <div class="form-group"><label>Kullanıcı Adı</label><input type="text" id="loginUsername" placeholder="Kullanıcı adınızı girin"></div>
-            <div class="form-group"><label>Şifre</label><input type="password" id="loginPassword" placeholder="Şifrenizi girin"></div>
+            <div class="form-group"><label>Kullanıcı Adı veya E-posta</label><input type="text" id="loginUsername" placeholder="sena veya e-posta adresiniz" autocomplete="username"></div>
+            <div class="form-group"><label>Şifre</label><input type="password" id="loginPassword" placeholder="Şifrenizi girin" autocomplete="current-password"></div>
             <button type="button" class="btn btn-primary" id="loginBtn">GİRİŞ YAP</button>
+            <div class="login-ayirici">veya</div>
+            <button type="button" class="btn btn-google" id="googleLoginBtn">Google ile giriş</button>
             <div class="error-message" id="loginError">Kullanıcı adı veya şifre hatalı!</div>
+            <p class="login-not">Iceinox iç kullanım. Yalnızca tanımlı temsilciler giriş yapabilir.</p>
         </div>
     </div>
 
@@ -1125,20 +1167,35 @@
 
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
+        const auth = firebase.auth();
+        auth.setPersistence(firebase.auth.Auth.Persistence.SESSION);
+        const secondaryApp = firebase.initializeApp(firebaseConfig, 'Secondary');
+        const secondaryAuth = secondaryApp.auth();
 
-        // ============ KULLANICI TANIMLAMALARI ============
         const VARSAYILAN_KULLANICILAR = {
-            "murat": { sifre: "mrt2468", yetki: "kendi" },
-            "ibrahim": { sifre: "ibr2468", yetki: "kendi" },
-            "denizhan": { sifre: "dnz2468", yetki: "kendi" },
-            "orkun": { sifre: "ork2468", yetki: "kendi" },
-            "dilshod": { sifre: "dls2468", yetki: "kendi" },
-            "barış": { sifre: "brs2468", yetki: "tum" },
-            "burak": { sifre: "brk2468", yetki: "tum" },
-            "sena": { sifre: "snn2003", yetki: "tum" }
+            "murat": { yetki: "kendi", email: "murat@iceinoxcrm.web.app" },
+            "ibrahim": { yetki: "kendi", email: "ibrahim@iceinoxcrm.web.app" },
+            "denizhan": { yetki: "kendi", email: "denizhan@iceinoxcrm.web.app" },
+            "orkun": { yetki: "kendi", email: "orkun@iceinoxcrm.web.app" },
+            "dilshod": { yetki: "kendi", email: "dilshod@iceinoxcrm.web.app" },
+            "barış": { yetki: "tum", email: "baris@iceinoxcrm.web.app" },
+            "burak": { yetki: "tum", email: "burak@iceinoxcrm.web.app" },
+            "sena": { yetki: "tum", email: "sena.nur.tv6@gmail.com" }
+        };
+
+        const EPOSTA_TAKMA_AD = {
+            "sena.nur.tv6@gmail.com": "sena",
+            "murat@iceinoxcrm.web.app": "murat",
+            "ibrahim@iceinoxcrm.web.app": "ibrahim",
+            "denizhan@iceinoxcrm.web.app": "denizhan",
+            "orkun@iceinoxcrm.web.app": "orkun",
+            "dilshod@iceinoxcrm.web.app": "dilshod",
+            "baris@iceinoxcrm.web.app": "barış",
+            "burak@iceinoxcrm.web.app": "burak"
         };
 
         let KULLANICILAR = {};
+        let oturumAciliyor = false;
 
         const DANISMAN_LISTESI = ["Barış", "Burak", "Murat", "İbrahim", "Dilshod", "Orkun", "Denizhan"];
 
@@ -1518,14 +1575,62 @@
             }
         }
 
+        function kullaniciEposta(ad) {
+            if (!ad) return '';
+            const key = String(ad).trim().toLowerCase();
+            if (key.includes('@')) return key;
+            if (KULLANICILAR[key] && KULLANICILAR[key].email) return KULLANICILAR[key].email;
+            if (VARSAYILAN_KULLANICILAR[key] && VARSAYILAN_KULLANICILAR[key].email) return VARSAYILAN_KULLANICILAR[key].email;
+            return key.replace(/ı/g, 'i').replace(/ş/g, 's').replace(/ğ/g, 'g').replace(/ü/g, 'u').replace(/ö/g, 'o').replace(/ç/g, 'c') + '@iceinoxcrm.web.app';
+        }
+
+        function kullaniciAdindanEposta(email) {
+            if (!email) return '';
+            const e = String(email).trim().toLowerCase();
+            if (EPOSTA_TAKMA_AD[e]) return EPOSTA_TAKMA_AD[e];
+            for (const [ad, data] of Object.entries(KULLANICILAR)) {
+                if (data && data.email && String(data.email).toLowerCase() === e) return ad;
+            }
+            return '';
+        }
+
+        function epostaIzinliMi(email) {
+            if (!email) return false;
+            const e = email.toLowerCase();
+            if (EPOSTA_TAKMA_AD[e]) return true;
+            return Object.values(KULLANICILAR).some(u => u && u.email && String(u.email).toLowerCase() === e);
+        }
+
+        function girisHatasiGoster(mesaj) {
+            const el = document.getElementById('loginError');
+            if (!el) return;
+            el.textContent = mesaj;
+            el.style.display = 'block';
+        }
+
+        function firebaseDurum(metin, online) {
+            const statusEl = document.getElementById('firebaseStatus');
+            if (statusEl) {
+                statusEl.textContent = metin;
+                statusEl.className = 'status-badge ' + (online ? 'status-online' : 'status-offline');
+            }
+        }
+
         async function kullanicilariYukle() {
             try {
                 const doc = await db.collection('ayarlar').doc('kullanicilar').get();
                 if (doc.exists && doc.data().kullanicilar) {
                     KULLANICILAR = doc.data().kullanicilar;
+                    Object.keys(KULLANICILAR).forEach(ad => {
+                        if (KULLANICILAR[ad] && !KULLANICILAR[ad].email) {
+                            KULLANICILAR[ad].email = (VARSAYILAN_KULLANICILAR[ad] && VARSAYILAN_KULLANICILAR[ad].email) || kullaniciEposta(ad);
+                        }
+                        if (KULLANICILAR[ad] && !KULLANICILAR[ad].yetki && VARSAYILAN_KULLANICILAR[ad]) {
+                            KULLANICILAR[ad].yetki = VARSAYILAN_KULLANICILAR[ad].yetki;
+                        }
+                    });
                 } else {
                     KULLANICILAR = JSON.parse(JSON.stringify(VARSAYILAN_KULLANICILAR));
-                    await kullanicilariKaydet();
                 }
                 return true;
             } catch (e) {
@@ -1542,17 +1647,7 @@
             } catch (e) { console.error('Kullanıcı kaydetme:', e); return false; }
         }
 
-        db.collection('ziyaretler').limit(1).get()
-            .then(() => {
-                const statusEl = document.getElementById('firebaseStatus');
-                if (statusEl) { statusEl.textContent = '☁️ Online'; statusEl.className = 'status-badge status-online'; }
-                const syncEl = document.getElementById('syncBadge');
-                if (syncEl) syncEl.innerHTML = '<span style="color:green;font-size:12px;">☁️ Senkronize</span>';
-            })
-            .catch(() => {
-                const statusEl = document.getElementById('firebaseStatus');
-                if (statusEl) { statusEl.textContent = '⚠️ Offline'; }
-            });
+        firebaseDurum('☁️ Hazır', true);
 
         async function kayitlariYukle() {
             try {
@@ -2134,12 +2229,12 @@
             if (duzenlenecekKullaniciAdi) {
                 const mevcut = KULLANICILAR[duzenlenecekKullaniciAdi];
                 if (duzenlenecekKullaniciAdi !== ad) { delete KULLANICILAR[duzenlenecekKullaniciAdi]; }
-                KULLANICILAR[ad] = { sifre: sifre || mevcut.sifre, yetki: yetki };
+                KULLANICILAR[ad] = { sifre: sifre || mevcut.sifre, yetki: yetki, email: mevcut.email || kullaniciEposta(ad) };
             } else {
                 if (!sifre) return alert('Lütfen şifre girin!');
                 if (KULLANICILAR[ad]) return alert('Bu kullanıcı adı zaten var!');
                 if (sifre.length < 6) return alert('Şifre en az 6 karakter olmalı!');
-                KULLANICILAR[ad] = { sifre, yetki };
+                KULLANICILAR[ad] = { sifre, yetki, email: kullaniciEposta(ad) };
             }
             const sonuc = await kullanicilariKaydet();
             if (sonuc) { alert('✅ Kullanıcı başarıyla kaydedildi!');
@@ -2248,6 +2343,8 @@
             if (ulkeSelectEl) ulkeSelectEl.addEventListener('change', ulkeDegisti);
             const loginBtn = document.getElementById('loginBtn');
             if (loginBtn) loginBtn.addEventListener('click', login);
+            const googleLoginBtn = document.getElementById('googleLoginBtn');
+            if (googleLoginBtn) googleLoginBtn.addEventListener('click', googleGiris);
             const logoutBtn = document.getElementById('logoutBtn');
             if (logoutBtn) logoutBtn.addEventListener('click', logout);
             const kaydetBtn = document.getElementById('kaydetBtn');
@@ -2505,14 +2602,19 @@
 
         function ulkeDegisti() { ulkeDegistiManuel(document.getElementById('ulke').value, ''); }
 
-        async function login() {
-            const username = document.getElementById('loginUsername').value.trim().toLowerCase();
-            const password = document.getElementById('loginPassword').value.trim();
-            await kullanicilariYukle();
-            await carileriYukle();
-            await ajandaVerileriniYukle();
-            const userData = KULLANICILAR[username];
-            if (userData && userData.sifre === password) {
+        async function oturumuBaslat(username) {
+            if (oturumAciliyor) return;
+            oturumAciliyor = true;
+            try {
+                await kullanicilariYukle();
+                await carileriYukle();
+                await ajandaVerileriniYukle();
+                const userData = KULLANICILAR[username] || VARSAYILAN_KULLANICILAR[username];
+                if (!userData) {
+                    girisHatasiGoster('Bu hesabın CRM yetkisi yok. Yalnızca Iceinox temsilcileri girebilir.');
+                    try { await auth.signOut(); } catch (e) {}
+                    return;
+                }
                 currentUser = username;
                 currentUserYetki = userData.yetki;
                 document.getElementById('loginPage').style.display = 'none';
@@ -2522,6 +2624,9 @@
                 await kayitlariYukle();
                 kayitlariGoster();
                 document.getElementById('loginError').style.display = 'none';
+                firebaseDurum('☁️ Online', true);
+                const syncEl = document.getElementById('syncBadge');
+                if (syncEl) syncEl.innerHTML = '<span style="color:green;font-size:12px;">☁️ Senkronize</span>';
                 if (currentUserYetki === 'tum') {
                     const silinenlerTab = document.getElementById('silinenlerTab');
                     if (silinenlerTab) silinenlerTab.style.display = 'inline-block';
@@ -2531,19 +2636,75 @@
                     if (silinenCarilerTab) silinenCarilerTab.style.display = 'inline-block';
                     guncelleSilinenCarilerSayisi();
                 }
-            } else {
-                document.getElementById('loginError').style.display = 'block';
+            } finally {
+                oturumAciliyor = false;
             }
         }
 
-        function logout() {
+        async function login() {
+            const giris = document.getElementById('loginUsername').value.trim().toLowerCase();
+            const password = document.getElementById('loginPassword').value.trim();
+            document.getElementById('loginError').style.display = 'none';
+            if (!giris || !password) {
+                girisHatasiGoster('Kullanıcı adı ve şifre girin.');
+                return;
+            }
+            await kullanicilariYukle();
+            const ad = giris.includes('@') ? (kullaniciAdindanEposta(giris) || '') : giris;
+            if (!ad) {
+                girisHatasiGoster('Bu e-posta Iceinox CRM kullanıcı listesinde yok.');
+                return;
+            }
+            const email = giris.includes('@') ? giris : kullaniciEposta(ad);
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+                await oturumuBaslat(ad);
+                return;
+            } catch (e) {
+                const kod = e.code || '';
+                if (kod !== 'auth/operation-not-allowed' && kod !== 'auth/configuration-not-found' && kod !== 'auth/user-not-found' && kod !== 'auth/wrong-password' && kod !== 'auth/invalid-credential' && kod !== 'auth/invalid-email') {
+                    girisHatasiGoster('Giriş yapılamadı. Kullanıcı adı ve şifreyi kontrol edin.');
+                    return;
+                }
+            }
+            const userData = KULLANICILAR[ad];
+            if (userData && userData.sifre && userData.sifre === password) {
+                await oturumuBaslat(ad);
+            } else {
+                girisHatasiGoster('Kullanıcı adı veya şifre hatalı!');
+            }
+        }
+
+        async function googleGiris() {
+            document.getElementById('loginError').style.display = 'none';
+            const provider = new firebase.auth.GoogleAuthProvider();
+            provider.setCustomParameters({ prompt: 'select_account', login_hint: 'sena.nur.tv6@gmail.com' });
+            try {
+                const sonuc = await auth.signInWithPopup(provider);
+                const email = (sonuc.user && sonuc.user.email || '').toLowerCase();
+                const username = kullaniciAdindanEposta(email) || (email === 'sena.nur.tv6@gmail.com' ? 'sena' : '');
+                if (!username) {
+                    await auth.signOut();
+                    girisHatasiGoster('Bu Google hesabının bu CRM için yetkisi yok.');
+                    return;
+                }
+                await oturumuBaslat(username);
+            } catch (e) {
+                if (e.code === 'auth/popup-closed-by-user') return;
+                girisHatasiGoster('Google ile giriş şu an kullanılamıyor. Kullanıcı adı ve şifre ile deneyin.');
+            }
+        }
+
+        async function logout() {
             currentUser = null;
             currentUserYetki = null;
+            try { await auth.signOut(); } catch (e) {}
             document.getElementById('mainPage').style.display = 'none';
             document.getElementById('loginPage').style.display = 'flex';
             document.getElementById('loginUsername').value = '';
             document.getElementById('loginPassword').value = '';
             document.getElementById('loginError').style.display = 'none';
+            firebaseDurum('☁️ Hazır', true);
         }
 
         function formVerileriniAl() {
@@ -3154,6 +3315,13 @@
         window.aySeciminiKaldir = aySeciminiKaldir;
         window.kayitlariSirala = kayitlariSirala;
         window.toggleRow = window.toggleRow;
+
+        auth.onAuthStateChanged(async function(user) {
+            if (!user || currentUser || oturumAciliyor) return;
+            const email = (user.email || '').toLowerCase();
+            const ad = kullaniciAdindanEposta(email) || (email === 'sena.nur.tv6@gmail.com' ? 'sena' : '');
+            if (ad) await oturumuBaslat(ad);
+        });
     </script>
 </body>
 </html>
