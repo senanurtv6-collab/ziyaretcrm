@@ -1477,23 +1477,23 @@
             tbody.innerHTML = filtrelenmisCariler.map(cari => {
                 let durumHtml = '';
                 if (cari.olusturan && cari.olusturan !== 'sistem') {
-                    durumHtml = `<span class="durum-created">👤 ${cari.olusturan}</span><br><small style="color:#999;">${cari.olusturma_tarihi || ''}</small>`;
+                    durumHtml = `<span class="durum-created">👤 ${escapeHtml(cari.olusturan)}</span><br><small style="color:#999;">${escapeHtml(cari.olusturma_tarihi || '')}</small>`;
                 } else if (cari.olusturan === 'sistem') {
                     durumHtml = `<span style="color:#6c757d;">⚙️ Sistem</span><br><small style="color:#999;">${cari.olusturma_tarihi || ''}</small>`;
                 }
                 if (cari.duzenleyen) {
-                    durumHtml += `<br><span class="durum-edited">✏️ ${cari.duzenleyen}</span><br><small style="color:#999;">${cari.duzenleme_tarihi || ''}</small>`;
+                    durumHtml += `<br><span class="durum-edited">✏️ ${escapeHtml(cari.duzenleyen)}</span><br><small style="color:#999;">${escapeHtml(cari.duzenleme_tarihi || '')}</small>`;
                 }
                 return `<tr>
-                    <td><strong>${cari.kod}</strong></td>
-                    <td>${cari.isim || '-'}</td>
-                    <td>${cari.ulke || '-'}</td>
-                    <td>${cari.sehir || '-'}</td>
-                    <td>${cari.telefon || '-'}</td>
-                    <td>${cari.email || '-'}</td>
-                    <td>${cari.ilgili_kisi || '-'}</td>
+                    <td><strong>${escapeHtml(cari.kod)}</strong></td>
+                    <td>${escapeHtml(cari.isim || '-')}</td>
+                    <td>${escapeHtml(cari.ulke || '-')}</td>
+                    <td>${escapeHtml(cari.sehir || '-')}</td>
+                    <td>${escapeHtml(cari.telefon || '-')}</td>
+                    <td>${escapeHtml(cari.email || '-')}</td>
+                    <td>${escapeHtml(cari.ilgili_kisi || '-')}</td>
                     <td>${durumHtml || '-'}</td>
-                    <td><button class="btn btn-warning btn-sm" onclick="cariDuzenle('${cari.kod}')">✏️ Düzenle</button> <button class="btn btn-danger btn-sm" onclick="cariSil('${cari.kod}')">🗑️ Sil</button></td>
+                    <td><button class="btn btn-warning btn-sm" onclick="cariDuzenle('${escapeHtml(cari.kod)}')">✏️ Düzenle</button> <button class="btn btn-danger btn-sm" onclick="cariSil('${escapeHtml(cari.kod)}')">🗑️ Sil</button></td>
                 </tr>`;
             }).join('');
         }
@@ -1573,6 +1573,15 @@
                 const tab = document.getElementById('silinenCarilerTab');
                 if (tab) tab.style.display = 'inline-block';
             }
+        }
+
+        function escapeHtml(v) {
+            return String(v == null ? '' : v)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
         }
 
         function kullaniciEposta(ad) {
@@ -2065,13 +2074,13 @@
             if (SILINEN_CARILER.length === 0) { tbody.innerHTML =
                     '<tr><td colspan="7" style="text-align:center;">Silinen cari bulunamadı</td></tr>'; } else { tbody
                     .innerHTML = SILINEN_CARILER.map(c => `<tr>
-                <td><strong>${c.kod}</strong></td>
-                <td>${c.isim}</td>
-                <td>${c.ulke || '-'}</td>
-                <td>${c.sehir || '-'}</td>
-                <td><strong style="color:#dc3545;">${c.silenKisi || '-'}</strong></td>
-                <td>${c.silinmeTarihi || '-'}</td>
-                <td><button class="btn btn-info btn-sm" onclick="silinenCariDetay('${c.kod}')">🔍 Detay</button></td>
+                <td><strong>${escapeHtml(c.kod)}</strong></td>
+                <td>${escapeHtml(c.isim)}</td>
+                <td>${escapeHtml(c.ulke || '-')}</td>
+                <td>${escapeHtml(c.sehir || '-')}</td>
+                <td><strong style="color:#dc3545;">${escapeHtml(c.silenKisi || '-')}</strong></td>
+                <td>${escapeHtml(c.silinmeTarihi || '-')}</td>
+                <td><button class="btn btn-info btn-sm" onclick="silinenCariDetay('${escapeHtml(c.kod)}')">🔍 Detay</button></td>
             </tr>`).join(''); }
         }
 
@@ -2823,7 +2832,7 @@
                 temsilciSelect.innerHTML = '<option value="">Tüm Temsilciler</option>';
                 if (currentUserYetki === 'tum') {
                     [...new Set(tumKayitlar.map(k => k.kaydeden))].forEach(t =>
-                        temsilciSelect.innerHTML += `<option value="${t}">${t}</option>`);
+                        temsilciSelect.innerHTML += `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`);
                 } else {
                     temsilciSelect.innerHTML += `<option value="${currentUser}">${currentUser}</option>`;
                     temsilciSelect.value = currentUser;
@@ -2933,16 +2942,16 @@
             } else if (tbody) {
                 tbody.innerHTML = pageData.map(k =>
                     `<tr class="${selectedRows.has(k.id) ? 'selected' : ''}">
-                    <td class="checkbox-cell"><input type="checkbox" class="row-checkbox" data-id="${k.id}" ${selectedRows.has(k.id) ? 'checked' : ''} onchange="toggleRow('${k.id}', this.checked)"></td>
-                    <td>${k.kaydeden || '-'}</td>
-                    <td>${k.cari_kod || '-'}</td>
-                    <td>${k.cari_isim || '-'}</td>
-                    <td>${k.tarih || '-'}</td>
-                    <td>${k.ziyaret_saati || '-'}</td>
-                    <td>${k.ulke || '-'}</td>
-                    <td>${k.sehir || '-'}</td>
-                    <td>${k.firma_cesidi || '-'}</td>
-                    <td><button class="btn btn-info btn-sm" onclick="detayGoster('${k.id}')">🔍 Detay</button></td>
+                    <td class="checkbox-cell"><input type="checkbox" class="row-checkbox" data-id="${escapeHtml(k.id)}" ${selectedRows.has(k.id) ? 'checked' : ''} onchange="toggleRow('${escapeHtml(k.id)}', this.checked)"></td>
+                    <td>${escapeHtml(k.kaydeden || '-')}</td>
+                    <td>${escapeHtml(k.cari_kod || '-')}</td>
+                    <td>${escapeHtml(k.cari_isim || '-')}</td>
+                    <td>${escapeHtml(k.tarih || '-')}</td>
+                    <td>${escapeHtml(k.ziyaret_saati || '-')}</td>
+                    <td>${escapeHtml(k.ulke || '-')}</td>
+                    <td>${escapeHtml(k.sehir || '-')}</td>
+                    <td>${escapeHtml(k.firma_cesidi || '-')}</td>
+                    <td><button class="btn btn-info btn-sm" onclick="detayGoster('${escapeHtml(k.id)}')">🔍 Detay</button></td>
                  </tr>`
                 ).join('');
             }
@@ -2967,16 +2976,16 @@
             if (silinenKayitlar.length === 0) tbody.innerHTML =
                 '<tr><td colspan="10" style="text-align:center;">Silinen kayıt bulunamadı</td></tr>';
             else tbody.innerHTML = silinenKayitlar.map(k => `<tr>
-                <td>${k.kaydeden || '-'}</td>
-                <td>${k.cari_kod || '-'}</td>
-                <td>${k.cari_isim || '-'}</td>
-                <td>${k.tarih || '-'}</td>
-                <td>${k.ziyaret_saati || '-'}</td>
-                <td>${k.ulke || '-'}</td>
-                <td>${k.sehir || '-'}</td>
-                <td><strong>${k.silenKisi || '-'}</strong></td>
-                <td>${k.silinmeTarihi || '-'}</td>
-                <td><button class="btn btn-info btn-sm" onclick="silinenDetayGoster('${k.id}')">🔍 Detay</button></td>
+                <td>${escapeHtml(k.kaydeden || '-')}</td>
+                <td>${escapeHtml(k.cari_kod || '-')}</td>
+                <td>${escapeHtml(k.cari_isim || '-')}</td>
+                <td>${escapeHtml(k.tarih || '-')}</td>
+                <td>${escapeHtml(k.ziyaret_saati || '-')}</td>
+                <td>${escapeHtml(k.ulke || '-')}</td>
+                <td>${escapeHtml(k.sehir || '-')}</td>
+                <td><strong>${escapeHtml(k.silenKisi || '-')}</strong></td>
+                <td>${escapeHtml(k.silinmeTarihi || '-')}</td>
+                <td><button class="btn btn-info btn-sm" onclick="silinenDetayGoster('${escapeHtml(k.id)}')">🔍 Detay</button></td>
             </tr>`).join('');
         }
 
@@ -3153,30 +3162,32 @@
         }
 
         function kayitDetayHtml(k) {
-            return `<div class="detail-row"><span class="detail-label">Temsilci:</span><span class="detail-value">${k.kaydeden || '-'}</span></div>
-        <div class="detail-row"><span class="detail-label">Kayıt Tarihi:</span><span class="detail-value">${k.kayit_tarihi || '-'}</span></div>
-        <div class="detail-row"><span class="detail-label">Cari Grubu:</span><span class="detail-value">${k.cari_grup || '-'}</span></div>
-        <div class="detail-row"><span class="detail-label">Cari Kodu:</span><span class="detail-value"><strong>${k.cari_kod || '-'}</strong></span></div>
-        <div class="detail-row"><span class="detail-label">Cari Adı / Firma:</span><span class="detail-value"><strong>${k.cari_isim || '-'}</strong></span></div>
-        <div class="detail-row"><span class="detail-label">Tarih:</span><span class="detail-value">${k.tarih || '-'}</span></div>
-        <div class="detail-row"><span class="detail-label">Ziyaret Saati:</span><span class="detail-value"><strong>${k.ziyaret_saati || '-'}</strong></span></div>
-        <div class="detail-row"><span class="detail-label">Ülke:</span><span class="detail-value">${k.ulke || '-'}</span></div>
-        <div class="detail-row"><span class="detail-label">Şehir:</span><span class="detail-value">${k.sehir || '-'}</span></div>
-        <div class="detail-row"><span class="detail-label">İlgili Kişi:</span><span class="detail-value">${k.ilgili_kisi || '-'}</span></div>
-        <div class="detail-row"><span class="detail-label">E-posta:</span><span class="detail-value">${k.email || '-'}</span></div>
-        <div class="detail-row"><span class="detail-label">Telefon:</span><span class="detail-value">${k.telefon || '-'}</span></div>
-        <div class="detail-row"><span class="detail-label">Firma Çeşidi:</span><span class="detail-value">${k.firma_cesidi || '-'}</span></div>
-        <div class="detail-row"><span class="detail-label">Çalışan Sayısı:</span><span class="detail-value">${k.calisan_sayisi || '-'}</span></div>
-        <div class="detail-row"><span class="detail-label">Yıllık Satış:</span><span class="detail-value">${k.yillik_satis || '-'}</span></div>
-        <div class="detail-row"><span class="detail-label">Planlanan Alım:</span><span class="detail-value">${k.planlanan_alim || '-'}</span></div>
-        <div class="detail-row"><span class="detail-label">Planlanan Alım Tarihi:</span><span class="detail-value">${k.planlanan_alim_tarihi || '-'}</span></div>
-        <div class="detail-row"><span class="detail-label">Sonraki Ziyaret:</span><span class="detail-value">${k.sonraki_ziyaret || '-'}</span></div>
-        <div class="detail-row"><span class="detail-label">Not:</span><span class="detail-value">${k.not || '-'}</span></div>
+            const e = (v) => escapeHtml(v || '-');
+            const r = k.rakipler || {};
+            return `<div class="detail-row"><span class="detail-label">Temsilci:</span><span class="detail-value">${e(k.kaydeden)}</span></div>
+        <div class="detail-row"><span class="detail-label">Kayıt Tarihi:</span><span class="detail-value">${e(k.kayit_tarihi)}</span></div>
+        <div class="detail-row"><span class="detail-label">Cari Grubu:</span><span class="detail-value">${e(k.cari_grup)}</span></div>
+        <div class="detail-row"><span class="detail-label">Cari Kodu:</span><span class="detail-value"><strong>${e(k.cari_kod)}</strong></span></div>
+        <div class="detail-row"><span class="detail-label">Cari Adı / Firma:</span><span class="detail-value"><strong>${e(k.cari_isim)}</strong></span></div>
+        <div class="detail-row"><span class="detail-label">Tarih:</span><span class="detail-value">${e(k.tarih)}</span></div>
+        <div class="detail-row"><span class="detail-label">Ziyaret Saati:</span><span class="detail-value"><strong>${e(k.ziyaret_saati)}</strong></span></div>
+        <div class="detail-row"><span class="detail-label">Ülke:</span><span class="detail-value">${e(k.ulke)}</span></div>
+        <div class="detail-row"><span class="detail-label">Şehir:</span><span class="detail-value">${e(k.sehir)}</span></div>
+        <div class="detail-row"><span class="detail-label">İlgili Kişi:</span><span class="detail-value">${e(k.ilgili_kisi)}</span></div>
+        <div class="detail-row"><span class="detail-label">E-posta:</span><span class="detail-value">${e(k.email)}</span></div>
+        <div class="detail-row"><span class="detail-label">Telefon:</span><span class="detail-value">${e(k.telefon)}</span></div>
+        <div class="detail-row"><span class="detail-label">Firma Çeşidi:</span><span class="detail-value">${e(k.firma_cesidi)}</span></div>
+        <div class="detail-row"><span class="detail-label">Çalışan Sayısı:</span><span class="detail-value">${e(k.calisan_sayisi)}</span></div>
+        <div class="detail-row"><span class="detail-label">Yıllık Satış:</span><span class="detail-value">${e(k.yillik_satis)}</span></div>
+        <div class="detail-row"><span class="detail-label">Planlanan Alım:</span><span class="detail-value">${e(k.planlanan_alim)}</span></div>
+        <div class="detail-row"><span class="detail-label">Planlanan Alım Tarihi:</span><span class="detail-value">${e(k.planlanan_alim_tarihi)}</span></div>
+        <div class="detail-row"><span class="detail-label">Sonraki Ziyaret:</span><span class="detail-value">${e(k.sonraki_ziyaret)}</span></div>
+        <div class="detail-row"><span class="detail-label">Not:</span><span class="detail-value">${e(k.not)}</span></div>
         <hr><h4>Rakipler ve Fiyatlar</h4>
-        <div class="detail-row"><span class="detail-label">Rakip 1:</span><span class="detail-value">${k.rakipler?.rakip1 || '-'} (${k.rakipler?.fiyat1 || '-'})</span></div>
-        <div class="detail-row"><span class="detail-label">Rakip 2:</span><span class="detail-value">${k.rakipler?.rakip2 || '-'} (${k.rakipler?.fiyat2 || '-'})</span></div>
-        <div class="detail-row"><span class="detail-label">Rakip 3:</span><span class="detail-value">${k.rakipler?.rakip3 || '-'} (${k.rakipler?.fiyat3 || '-'})</span></div>
-        <div class="detail-row"><span class="detail-label">Rakip 4:</span><span class="detail-value">${k.rakipler?.rakip4 || '-'} (${k.rakipler?.fiyat4 || '-'})</span></div>`;
+        <div class="detail-row"><span class="detail-label">Rakip 1:</span><span class="detail-value">${e(r.rakip1)} (${e(r.fiyat1)})</span></div>
+        <div class="detail-row"><span class="detail-label">Rakip 2:</span><span class="detail-value">${e(r.rakip2)} (${e(r.fiyat2)})</span></div>
+        <div class="detail-row"><span class="detail-label">Rakip 3:</span><span class="detail-value">${e(r.rakip3)} (${e(r.fiyat3)})</span></div>
+        <div class="detail-row"><span class="detail-label">Rakip 4:</span><span class="detail-value">${e(r.rakip4)} (${e(r.fiyat4)})</span></div>`;
         }
 
         function duzenlemeAc() {
