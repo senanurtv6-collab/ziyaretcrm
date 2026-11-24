@@ -1221,7 +1221,251 @@
         </div>
     </div>
 
-    <script src="rapor-hesap.js"></script>
+    <script>
+/* RAPOR_HESAP_BAS */
+(function (root, factory) {
+    var api = factory();
+    if (typeof module !== 'undefined' && module.exports) module.exports = api;
+    else root.ZiyaretRapor = api;
+})(typeof globalThis !== 'undefined' ? globalThis : this, function () {
+    var AY_KISA = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'];
+    var AY_UZUN = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
+    // 1'i ile 7'si aynı seyahattir: takvim farkı 6 gün.
+    var SEYAHAT_MAX_ARALIK_GUN = 6;
+    var PERSONEL_SIRA = ['denizhan', 'ibrahim', 'murat', 'orkun', 'dilshod', 'barış', 'burak', 'sena'];
+
+    function tarihCoz(deger) {
+        if (!deger) return null;
+        var s = String(deger).trim();
+        var m = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+        if (m) {
+            var y = +m[1], mo = +m[2], d = +m[3];
+            if (mo < 1 || mo > 12 || d < 1 || d > 31) return null;
+            return Date.UTC(y, mo - 1, d);
+        }
+        m = s.match(/^(\d{1,2})[./](\d{1,2})[./](\d{4})/);
+        if (m) {
+            var gun = +m[1], ay = +m[2], yil = +m[3];
+            if (ay < 1 || ay > 12 || gun < 1 || gun > 31) return null;
+            return Date.UTC(yil, ay - 1, gun);
+        }
+        return null;
+    }
+
+    function personelAnahtar(ad) {
+        return String(ad || '').trim().toLocaleLowerCase('tr-TR');
+    }
+
+    function personelGorunen(ad) {
+        var s = String(ad || '').trim();
+        if (!s) return 'BELİRTİLMEMİŞ';
+        return s.toLocaleUpperCase('tr-TR');
+    }
+
+    function sehirAnahtar(sehir) {
+        var s = String(sehir || '').trim().toLocaleUpperCase('tr-TR');
+        return s || 'BELİRTİLMEMİŞ';
+    }
+
+    function gunFarki(oncekiUtc, simdikiUtc) {
+        return Math.round((simdikiUtc - oncekiUtc) / 86400000);
+    }
+
+    function seyahatSayisi(gunlerUtc, baskaSehirVar) {
+        var benzersiz = [];
+        var gorulen = {};
+        (gunlerUtc || []).forEach(function (g) {
+            if (!gorulen[g]) {
+                gorulen[g] = true;
+                benzersiz.push(g);
+            }
+        });
+        benzersiz.sort(function (a, b) { return a - b; });
+        if (!benzersiz.length) return 0;
+        var sayi = 1;
+        for (var i = 1; i < benzersiz.length; i++) {
+            var fark = gunFarki(benzersiz[i - 1], benzersiz[i]);
+            if (fark > SEYAHAT_MAX_ARALIK_GUN || baskaSehirVar(benzersiz[i - 1], benzersiz[i])) sayi += 1;
+        }
+        return sayi;
+    }
+
+    function kayitUygun(k) {
+        return !!(k && k.silindi !== true);
+    }
+
+    function siralaPersonel(anahtarlar) {
+        return anahtarlar.slice().sort(function (a, b) {
+            var ia = PERSONEL_SIRA.indexOf(a);
+            var ib = PERSONEL_SIRA.indexOf(b);
+            if (ia !== -1 || ib !== -1) {
+                if (ia === -1) return 1;
+                if (ib === -1) return -1;
+                return ia - ib;
+            }
+            return a.localeCompare(b, 'tr');
+        });
+    }
+
+    function raporHesapla(kayitlar, opts) {
+        opts = opts || {};
+        var yil = Number(opts.yil);
+        var tur = opts.tur === 'firma' ? 'firma' : 'seyahat';
+        var personelFiltre = personelAnahtar(opts.personel);
+        var sadeceDoluAylar = opts.sadeceDoluAylar !== false;
+        var kisiMap = new Map();
+
+        (kayitlar || []).forEach(function (k) {
+            if (!kayitUygun(k)) return;
+            var utc = tarihCoz(k.tarih);
+            if (utc == null) return;
+            var tarih = new Date(utc);
+            if (tarih.getUTCFullYear() !== yil) return;
+            var ay = tarih.getUTCMonth() + 1;
+            var personel = personelAnahtar(k.kaydeden);
+            if (!personel) return;
+            if (personelFiltre && personel !== personelFiltre) return;
+            var sehir = sehirAnahtar(k.sehir);
+            if (!kisiMap.has(personel)) {
+                kisiMap.set(personel, { ad: personelGorunen(k.kaydeden), aylar: new Map() });
+            }
+            var kisi = kisiMap.get(personel);
+            if (!kisi.aylar.has(ay)) kisi.aylar.set(ay, { gunSehir: new Map(), sehirler: new Map() });
+            var ayKova = kisi.aylar.get(ay);
+            if (!ayKova.gunSehir.has(utc)) ayKova.gunSehir.set(utc, new Set());
+            ayKova.gunSehir.get(utc).add(sehir);
+            if (!ayKova.sehirler.has(sehir)) ayKova.sehirler.set(sehir, { gunler: [], firma: 0 });
+            var sehirKova = ayKova.sehirler.get(sehir);
+            sehirKova.gunler.push(utc);
+            sehirKova.firma += 1;
+        });
+
+        var doluAySet = new Set();
+        kisiMap.forEach(function (kisi) {
+            kisi.aylar.forEach(function (_, ay) { doluAySet.add(ay); });
+        });
+        var ayNolar = [];
+        for (var i = 1; i <= 12; i++) {
+            if (!sadeceDoluAylar || doluAySet.has(i)) ayNolar.push(i);
+        }
+        if (!ayNolar.length) ayNolar = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+
+        function hucreDegeri(kisi, sehir, ay) {
+            var ayKova = kisi.aylar.get(ay);
+            if (!ayKova) return 0;
+            var sehirKova = ayKova.sehirler.get(sehir);
+            if (!sehirKova) return 0;
+            if (tur === 'firma') return sehirKova.firma;
+            return seyahatSayisi(sehirKova.gunler, function (onceki, simdiki) {
+                var bulundu = false;
+                ayKova.gunSehir.forEach(function (set, gun) {
+                    if (bulundu || gun <= onceki || gun >= simdiki) return;
+                    set.forEach(function (s) {
+                        if (s !== sehir) bulundu = true;
+                    });
+                });
+                return bulundu;
+            });
+        }
+
+        var kisiler = siralaPersonel(Array.from(kisiMap.keys())).map(function (anahtar) {
+            var kisi = kisiMap.get(anahtar);
+            var sehirSet = new Set();
+            kisi.aylar.forEach(function (ayKova) {
+                ayKova.sehirler.forEach(function (_, sehir) { sehirSet.add(sehir); });
+            });
+            var sehirler = Array.from(sehirSet).sort(function (a, b) {
+                return a.localeCompare(b, 'tr');
+            }).map(function (sehir) {
+                var hucreler = ayNolar.map(function (ay) { return hucreDegeri(kisi, sehir, ay); });
+                var toplam = hucreler.reduce(function (s, n) { return s + n; }, 0);
+                return { sehir: sehir, hucreler: hucreler, toplam: toplam };
+            }).filter(function (s) { return s.toplam > 0; });
+            var toplamlar = ayNolar.map(function (_, indeks) {
+                return sehirler.reduce(function (s, row) { return s + row.hucreler[indeks]; }, 0);
+            });
+            var genel = toplamlar.reduce(function (s, n) { return s + n; }, 0);
+            return { anahtar: anahtar, ad: kisi.ad, sehirler: sehirler, toplamlar: toplamlar, genel: genel };
+        }).filter(function (k) { return k.genel > 0; });
+
+        var genelToplam = ayNolar.map(function (_, indeks) {
+            return kisiler.reduce(function (s, k) { return s + k.toplamlar[indeks]; }, 0);
+        });
+        var genel = genelToplam.reduce(function (s, n) { return s + n; }, 0);
+
+        return {
+            yil: yil,
+            tur: tur,
+            baslik: tur === 'firma' ? 'Personel Şehir Müşteri Bazlı Aylık Ziyaret' : 'Personel Şehir Aylık Ziyaret',
+            aylar: ayNolar.map(function (no) { return { no: no, kisa: AY_KISA[no - 1], uzun: AY_UZUN[no - 1] }; }),
+            kisiler: kisiler,
+            genelToplam: genelToplam,
+            genel: genel
+        };
+    }
+
+    function yillariBul(kayitlar) {
+        var set = {};
+        (kayitlar || []).forEach(function (k) {
+            if (!kayitUygun(k)) return;
+            var utc = tarihCoz(k.tarih);
+            if (utc == null) return;
+            set[new Date(utc).getUTCFullYear()] = true;
+        });
+        set[new Date().getFullYear()] = true;
+        return Object.keys(set).map(Number).sort(function (a, b) { return b - a; });
+    }
+
+    function personelleriBul(kayitlar) {
+        var map = new Map();
+        (kayitlar || []).forEach(function (k) {
+            if (!kayitUygun(k)) return;
+            var anahtar = personelAnahtar(k.kaydeden);
+            if (!anahtar) return;
+            if (!map.has(anahtar)) map.set(anahtar, personelGorunen(k.kaydeden));
+        });
+        return siralaPersonel(Array.from(map.keys())).map(function (anahtar) {
+            return { anahtar: anahtar, ad: map.get(anahtar) };
+        });
+    }
+
+    function raporExcelSatirlari(model) {
+        var header = ['Personel / Şehir'].concat(model.aylar.map(function (a) { return a.kisa; }), ['Genel Toplam']);
+        var satirlar = [[model.baslik], ['Yıl: ' + model.yil], header];
+        var birlesimler = [];
+        model.kisiler.forEach(function (kisi) {
+            var rowIndex = satirlar.length;
+            var kisiSatir = [kisi.ad];
+            for (var c = 1; c < header.length; c++) kisiSatir.push('');
+            satirlar.push(kisiSatir);
+            birlesimler.push({ s: { r: rowIndex, c: 0 }, e: { r: rowIndex, c: header.length - 1 } });
+            kisi.sehirler.forEach(function (s) {
+                satirlar.push([s.sehir].concat(s.hucreler.map(function (n) { return n || ''; }), [s.toplam]));
+            });
+            satirlar.push(['Toplam'].concat(kisi.toplamlar, [kisi.genel]));
+        });
+        satirlar.push(['Genel Toplam'].concat(model.genelToplam, [model.genel]));
+        var dosyaAdi = model.tur === 'firma'
+            ? 'iceinox_personel_sehir_musteri_ziyaret_' + model.yil + '.xlsx'
+            : 'iceinox_personel_sehir_aylik_ziyaret_' + model.yil + '.xlsx';
+        return { satirlar: satirlar, birlesimler: birlesimler, dosyaAdi: dosyaAdi, header: header };
+    }
+
+    return {
+        AY_KISA: AY_KISA,
+        AY_UZUN: AY_UZUN,
+        SEYAHAT_MAX_ARALIK_GUN: SEYAHAT_MAX_ARALIK_GUN,
+        tarihCoz: tarihCoz,
+        seyahatSayisi: seyahatSayisi,
+        raporHesapla: raporHesapla,
+        yillariBul: yillariBul,
+        personelleriBul: personelleriBul,
+        raporExcelSatirlari: raporExcelSatirlari
+    };
+});
+
+/* RAPOR_HESAP_SON */
+    </script>
     <script>
         // ============ FIREBASE KONFİGÜRASYONU ============
         const firebaseConfig = {
