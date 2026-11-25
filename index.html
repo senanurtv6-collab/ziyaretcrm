@@ -1266,6 +1266,8 @@ n.strs.push(s);Un(r.wbrels,-1,"sharedStrings."+t,Pn.SST)}s="xl/workbook."+t;Qr(i
     // 1'i ile 7'si aynı seyahattir: takvim farkı 6 gün.
     var SEYAHAT_MAX_ARALIK_GUN = 6;
     var PERSONEL_SIRA = ['denizhan', 'ibrahim', 'murat', 'orkun', 'dilshod', 'barış', 'burak', 'sena'];
+    // Denizhan ve Murat yalnız şehir. İbrahim, Barış ve Orkun satırında şehir ile ülke birlikte.
+    var ULKE_ILE_SATIR = { ibrahim: true, orkun: true, 'barış': true };
 
     function tarihCoz(deger) {
         if (!deger) return null;
@@ -1298,6 +1300,14 @@ n.strs.push(s);Un(r.wbrels,-1,"sharedStrings."+t,Pn.SST)}s="xl/workbook."+t;Qr(i
     function sehirAnahtar(sehir) {
         var s = String(sehir || '').trim().toLocaleUpperCase('tr-TR');
         return s || 'BELİRTİLMEMİŞ';
+    }
+
+    function yerSatiri(personel, sehir, ulke) {
+        var sehirAd = sehirAnahtar(sehir);
+        if (!ULKE_ILE_SATIR[personel]) return sehirAd;
+        var ulkeAd = String(ulke || '').trim().toLocaleUpperCase('tr-TR');
+        if (!ulkeAd) return sehirAd;
+        return sehirAd + ' / ' + ulkeAd;
     }
 
     function gunFarki(oncekiUtc, simdikiUtc) {
@@ -1367,7 +1377,7 @@ n.strs.push(s);Un(r.wbrels,-1,"sharedStrings."+t,Pn.SST)}s="xl/workbook."+t;Qr(i
             var personel = personelAnahtar(k.kaydeden);
             if (!personel) return;
             if (personelFiltre && personel !== personelFiltre) return;
-            var sehir = sehirAnahtar(k.sehir);
+            var sehir = yerSatiri(personel, k.sehir, k.ulke);
             gunler.forEach(function (utc, indeks) {
                 var tarih = new Date(utc);
                 if (tarih.getUTCFullYear() !== yil) return;
@@ -3863,7 +3873,7 @@ n.strs.push(s);Un(r.wbrels,-1,"sharedStrings."+t,Pn.SST)}s="xl/workbook."+t;Qr(i
             if (tur === 'firma') {
                 return 'Personel, şehir ve ay bazında firma ziyareti sayısı. Her kayıt bir firma ziyaretidir. Örnek: Ekim ayında Denizhan Adana’da 11 kayıt varsa o hücre 11 olur. Aynı firmaya ay içinde iki kez gidildiyse 2 sayılır.';
             }
-            return 'Personelin o ay bir şehre kaç kez gittiği. Gidilen firma sayısı değildir. Aynı şehre art arda düşen günler tek ziyarettir: 1’inde Adana’ya çıkıp 7’sine kadar Adana’da kaldıysa bu 1 ziyaret sayılır. İki ziyaret gününün arası en fazla 6 günse ve bu arada başka bir şehre gidilmediyse aynı seyahat kabul edilir. Ara daha uzunsa veya arada başka şehir varsa yeni ziyaret başlar. Ayı aşan kalış her ayda ayrı görünür.';
+            return 'Personelin o ay bir şehre kaç kez gittiği. Gidilen firma sayısı değildir. Aynı şehre art arda düşen günler tek ziyarettir: 1’inde Adana’ya çıkıp 7’sine kadar Adana’da kaldıysa bu 1 ziyaret sayılır. İki ziyaret gününün arası en fazla 6 günse ve bu arada başka bir şehre gidilmediyse aynı seyahat kabul edilir. Ara daha uzunsa veya arada başka şehir varsa yeni ziyaret başlar. Ayı aşan kalış her ayda ayrı görünür. Denizhan ve Murat satırında yalnız şehir yazar. İbrahim, Barış ve Orkun satırında şehir ile ülke birlikte yazar.';
         }
 
         function raporSecenekDoldur(select, onceki, secenekler) {
